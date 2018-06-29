@@ -13,7 +13,14 @@
 using namespace std;
 
 #define WIN_WIDTH 1200
-#define WIN_HEIGHT 800
+#define WIN_HEIGHT 750
+
+// keep all input code organized
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
 
 // adjust the viewport when user resizes the window
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -53,6 +60,13 @@ int main()
     
     while(!glfwWindowShouldClose(window))
     {
+        // input
+        processInput(window);
+        
+        //rendering
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
         glfwPollEvents();
