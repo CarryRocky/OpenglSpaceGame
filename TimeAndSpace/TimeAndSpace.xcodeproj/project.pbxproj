@@ -57,6 +57,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		4F130BC520E6F0B400A38FBA /* glad */ = {
+			isa = PBXGroup;
+			children = (
+				4F130BC020E6EF3600A38FBA /* glad.cpp */,
+				4F130BC420E6F00500A38FBA /* khrplatform.h */,
+				4F130BC320E6EF8A00A38FBA /* glad.h */,
+			);
+			path = glad;
+			sourceTree = "<group>";
+		};
 		4F89989920E6C24100F8493B = {
 			isa = PBXGroup;
 			children = (
@@ -77,10 +87,8 @@
 		4F8998A420E6C24100F8493B /* TimeAndSpace */ = {
 			isa = PBXGroup;
 			children = (
-				4F130BC320E6EF8A00A38FBA /* glad.h */,
+				4F130BC520E6F0B400A38FBA /* glad */,
 				4F8998A520E6C24100F8493B /* main.cpp */,
-				4F130BC020E6EF3600A38FBA /* glad.cpp */,
-				4F130BC420E6F00500A38FBA /* khrplatform.h */,
 			);
 			path = TimeAndSpace;
 			sourceTree = "<group>";
