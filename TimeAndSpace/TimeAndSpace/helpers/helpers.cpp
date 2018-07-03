@@ -26,7 +26,7 @@ bool ReadFile(const char* pFileName, string& outFile)
         ret = true;
     }
     else {
-        cout << "can't open file: " << pFileName << endl;
+        cout << "Can't open file: " << pFileName << endl;
     }
     
     return ret;
