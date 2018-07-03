@@ -7,6 +7,8 @@
 //
 
 #include "glad/glad.h"
+#include "helpers.hpp"
+
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -25,8 +27,23 @@ void processInput(GLFWwindow *window)
 // adjust the viewport when user resizes the window
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    cout<<"cur width and height "<<width<<" "<<height<<endl;
     glViewport(0, 0, width, height);
+}
+
+void compileShader(unsigned int shader, const char* fileChar)
+{
+    // the second argument specifies how many strings we're passing as source code
+    glShaderSource(shader, 1, &fileChar, NULL);
+    glCompileShader(shader);
+    int  success;
+    char infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << endl;
+        cout << infoLog << endl;
+    }
 }
 
 int main()
@@ -55,8 +72,34 @@ int main()
         return -1;
     }
     
-    glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    
+    //set up vertex data
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    };
+    // the advantage of using those buffer objects is that we can send large batches of data all at once to the graphics card without having to send data a vertex a time
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // the paramater GL_STATIC_DEAW means: the data will most likely not change at all or very rarely
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    unsigned int fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    // read shader file
+    string vsFile, fsFile;
+    ReadFile("shaders/triangle.vs", vsFile);
+    ReadFile("shaders/triangle.fs", fsFile);
+    const char *vsChar = vsFile.c_str();
+    const char *fsChar = fsFile.c_str();
+    
+    compileShader(vertexShader, vsChar);
+    compileShader(fragmentShader, fsChar);
     
     while(!glfwWindowShouldClose(window))
     {
