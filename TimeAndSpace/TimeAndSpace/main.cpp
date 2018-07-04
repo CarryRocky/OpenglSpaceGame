@@ -41,7 +41,7 @@ void compileShader(unsigned int shader, const char* fileChar)
     if(!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << endl;
+        cout << "ERROR::SHADER::FILE:: "<< &fileChar << " COMPILATION_FAILED" << endl;
         cout << infoLog << endl;
     }
 }
@@ -80,6 +80,11 @@ int main()
         0.5f, -0.5f, 0.0f,
         0.0f,  0.5f, 0.0f
     };
+    
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    
     // the advantage of using those buffer objects is that we can send large batches of data all at once to the graphics card without having to send data a vertex a time
     unsigned int VBO;
     glGenBuffers(1, &VBO);
@@ -93,13 +98,37 @@ int main()
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     // read shader file
     string vsFile, fsFile;
-    ReadFile("shaders/triangle.vs", vsFile);
-    ReadFile("shaders/triangle.fs", fsFile);
+    ReadFile("triangle.vs", vsFile);
+    ReadFile("triangle.fs", fsFile);
     const char *vsChar = vsFile.c_str();
     const char *fsChar = fsFile.c_str();
     
     compileShader(vertexShader, vsChar);
     compileShader(fragmentShader, fsChar);
+    
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    int  success;
+    char infoLog[512];
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        cout << "ERROR::LINKING::SHADER::PROGRAM::FAILED" << endl;
+        cout << infoLog << endl;
+    }
+    // delete the shader objects once have linked them into the program object
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    
+    // the first parameter specifies which vertex attribute to configure
+    // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
+    // the forth parameter specifies if the data wanted to be normalized
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // parameter is the vertex attribute location as its argument
+    glEnableVertexAttribArray(0);
     
     while(!glfwWindowShouldClose(window))
     {
@@ -109,6 +138,10 @@ int main()
         //rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
