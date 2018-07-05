@@ -76,9 +76,14 @@ int main()
     
     //set up vertex data
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
+    };
+    unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
     };
     
     unsigned int VAO;
@@ -91,6 +96,11 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // the paramater GL_STATIC_DEAW means: the data will most likely not change at all or very rarely
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -125,6 +135,7 @@ int main()
     
     // the first parameter specifies which vertex attribute to configure
     // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
+    // because vertex attribute is a vec3 so the second parameter is composed of 3 values
     // the forth parameter specifies if the data wanted to be normalized
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     // parameter is the vertex attribute location as its argument
@@ -141,7 +152,9 @@ int main()
         
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // the last argument specifies an offset in the EBO
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
