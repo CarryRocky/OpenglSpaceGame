@@ -9,7 +9,7 @@
 #ifndef shader_hpp
 #define shader_hpp
 
-#include "../glad/glad.h"
+#include <glad/glad.h>
 #include "helpers.hpp"
 
 #include <string>

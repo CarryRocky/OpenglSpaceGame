@@ -6,10 +6,14 @@
 //  Copyright © 2018 Carry. All rights reserved.
 //
 
-#include "glad/glad.h"
+#include <glad/glad.h>
 #include "shader.hpp"
 
 #include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 using namespace std;
