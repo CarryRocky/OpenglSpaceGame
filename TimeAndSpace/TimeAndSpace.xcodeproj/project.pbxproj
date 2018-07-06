@@ -11,6 +11,7 @@
 		4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */; };
 		4F130BC120E6EF3600A38FBA /* glad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F130BC020E6EF3600A38FBA /* glad.cpp */; };
 		4F8998A620E6C24100F8493B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8998A520E6C24100F8493B /* main.cpp */; };
+		4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F97EE1520EF0C14009CCED2 /* shader.cpp */; };
 		4FACCED020EB3DBE00E557F0 /* helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FACCECE20EB3DBE00E557F0 /* helpers.cpp */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,8 @@
 		4F130BC420E6F00500A38FBA /* khrplatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = khrplatform.h; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F8998A520E6C24100F8493B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		4F97EE1520EF0C14009CCED2 /* shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
+		4F97EE1620EF0C14009CCED2 /* shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = shader.hpp; sourceTree = "<group>"; };
 		4FACCECE20EB3DBE00E557F0 /* helpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = helpers.cpp; sourceTree = "<group>"; };
 		4FACCECF20EB3DBE00E557F0 /* helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = helpers.hpp; sourceTree = "<group>"; };
 		4FACCED220EB3F2A00E557F0 /* triangle.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.vs; sourceTree = "<group>"; };
@@ -114,6 +117,8 @@
 			children = (
 				4FACCED220EB3F2A00E557F0 /* triangle.vs */,
 				4FACCED320EB43EF00E557F0 /* triangle.fs */,
+				4F97EE1520EF0C14009CCED2 /* shader.cpp */,
+				4F97EE1620EF0C14009CCED2 /* shader.hpp */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -176,6 +181,7 @@
 			files = (
 				4FACCED020EB3DBE00E557F0 /* helpers.cpp in Sources */,
 				4F8998A620E6C24100F8493B /* main.cpp in Sources */,
+				4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */,
 				4F130BC120E6EF3600A38FBA /* glad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

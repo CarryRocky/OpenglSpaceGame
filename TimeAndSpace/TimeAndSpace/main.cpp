@@ -7,7 +7,7 @@
 //
 
 #include "glad/glad.h"
-#include "helpers.hpp"
+#include "shader.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -28,22 +28,6 @@ void processInput(GLFWwindow *window)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}
-
-void compileShader(unsigned int shader, const char* fileChar)
-{
-    // the second argument specifies how many strings we're passing as source code
-    glShaderSource(shader, 1, &fileChar, NULL);
-    glCompileShader(shader);
-    int  success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::FILE:: "<< &fileChar << " COMPILATION_FAILED" << endl;
-        cout << infoLog << endl;
-    }
 }
 
 int main()
@@ -76,14 +60,16 @@ int main()
     
     //set up vertex data
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
+        // position             // color
+        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,
+        0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,
+//        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,
+        
     };
     unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
+        0, 1, 2,
+//        0, 2, 3
     };
     
     unsigned int VAO;
@@ -102,44 +88,17 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    // read shader file
-    string vsFile, fsFile;
-    ReadFile("triangle.vs", vsFile);
-    ReadFile("triangle.fs", fsFile);
-    const char *vsChar = vsFile.c_str();
-    const char *fsChar = fsFile.c_str();
-    
-    compileShader(vertexShader, vsChar);
-    compileShader(fragmentShader, fsChar);
-    
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    int  success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        cout << "ERROR::LINKING::SHADER::PROGRAM::FAILED" << endl;
-        cout << infoLog << endl;
-    }
-    // delete the shader objects once have linked them into the program object
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    Shader testShader("triangle.vs","triangle.fs");
     
     // the first parameter specifies which vertex attribute to configure
     // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
     // because vertex attribute is a vec3 so the second parameter is composed of 3 values
     // the forth parameter specifies if the data wanted to be normalized
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     // parameter is the vertex attribute location as its argument
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
     
     while(!glfwWindowShouldClose(window))
     {
@@ -151,12 +110,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         
         // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
-        glUseProgram(shaderProgram);
+        testShader.use();
         
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        glUniform4f(vertexColorLocation, 0.5f, greenValue, 0.5f, 1.0f);
+//        float timeValue = glfwGetTime();
+//        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+//        testShader.setFloat("ourColor", 0.5f, greenValue, 0.5f, 1.0f);
         
         glBindVertexArray(VAO);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
