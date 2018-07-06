@@ -150,7 +150,14 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
         glUseProgram(shaderProgram);
+        
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        
         glBindVertexArray(VAO);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // the last argument specifies an offset in the EBO
