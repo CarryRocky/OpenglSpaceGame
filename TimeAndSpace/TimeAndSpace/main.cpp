@@ -156,7 +156,7 @@ int main()
         float timeValue = glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+        glUniform4f(vertexColorLocation, 0.5f, greenValue, 0.5f, 1.0f);
         
         glBindVertexArray(VAO);
 //        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
