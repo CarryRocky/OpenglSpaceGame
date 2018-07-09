@@ -7,7 +7,6 @@
 //
 
 #include <glad/glad.h>
-#include "shader.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -17,6 +16,11 @@
 
 #include <iostream>
 using namespace std;
+
+#include "shader.hpp"
+// by defining STB_IMAGE_IMPLEMENTATION the preprocessor modifies the header file such that it only contains the relevant definition source code, effectively turning the header file into a .cpp file
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #define WIN_WIDTH 1200
 #define WIN_HEIGHT 750
@@ -63,17 +67,27 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     
     //set up vertex data
+//    // triangle
+//    float vertices[] = {
+//        // position             // color
+//        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,
+//        -0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,
+//        0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,
+////        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,
+//    };
+    
+    // rectangle
     float vertices[] = {
-        // position             // color
-        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,
-        0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,
-//        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,
-        
+        // positions            // colors           // texture coords
+        0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+        0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,      1.0f, 1.0f, 0.0f,   0.0f, 1.0f
     };
+    
     unsigned int indices[] = {
         0, 1, 2,
-//        0, 2, 3
+        2, 3, 0
     };
     
     unsigned int VAO;
@@ -92,17 +106,46 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
-    Shader testShader("triangle.vs","triangle.fs");
+    // texture
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load and generate the texture
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("imgs/wood.jpg", &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        // the second argument specifies the mipmap level
+        // the third argument tells OpenGL the format of the texture to store
+        // the sixth argument should always be zero (some legacy stuff)
+        // the seventh and eighth argument specify the format and datatype of the source image
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        cout << "Failed to load texture" << endl;
+    }
+    stbi_image_free(data);
+    
+    Shader testShader("shaders/triangle.vs","shaders/triangle.fs");
     
     // the first parameter specifies which vertex attribute to configure
     // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
     // because vertex attribute is a vec3 so the second parameter is composed of 3 values
     // the forth parameter specifies if the data wanted to be normalized
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     // parameter is the vertex attribute location as its argument
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
     
     while(!glfwWindowShouldClose(window))
     {
@@ -113,15 +156,11 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        glBindTexture(GL_TEXTURE_2D, texture);
         // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
         testShader.use();
         
-//        float timeValue = glfwGetTime();
-//        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-//        testShader.setFloat("ourColor", 0.5f, greenValue, 0.5f, 1.0f);
-        
         glBindVertexArray(VAO);
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         // the last argument specifies an offset in the EBO
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         

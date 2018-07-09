@@ -47,7 +47,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Users/carry/Documents/OpenglGame/OpenglSpaceGame/TimeAndSpace/TimeAndSpace/shaders"
+      customWorkingDirectory = "/Users/carry/Documents/OpenglGame/OpenglSpaceGame/TimeAndSpace/TimeAndSpace"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"

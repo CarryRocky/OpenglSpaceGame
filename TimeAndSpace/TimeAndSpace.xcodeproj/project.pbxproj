@@ -39,6 +39,7 @@
 		4FACCECF20EB3DBE00E557F0 /* helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = helpers.hpp; sourceTree = "<group>"; };
 		4FACCED220EB3F2A00E557F0 /* triangle.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.vs; sourceTree = "<group>"; };
 		4FACCED320EB43EF00E557F0 /* triangle.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.fs; sourceTree = "<group>"; };
+		4FB079E820F2E67100EE3F1B /* wood.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wood.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +92,7 @@
 		4F8998A420E6C24100F8493B /* TimeAndSpace */ = {
 			isa = PBXGroup;
 			children = (
+				4FB079E420F2D28000EE3F1B /* imgs */,
 				4FACCED120EB3F1600E557F0 /* shaders */,
 				4FACCECD20EB3D8000E557F0 /* helpers */,
 				4F130BC520E6F0B400A38FBA /* gladScr */,
@@ -117,6 +119,14 @@
 				4F97EE1620EF0C14009CCED2 /* shader.hpp */,
 			);
 			path = shaders;
+			sourceTree = "<group>";
+		};
+		4FB079E420F2D28000EE3F1B /* imgs */ = {
+			isa = PBXGroup;
+			children = (
+				4FB079E820F2E67100EE3F1B /* wood.jpg */,
+			);
+			path = imgs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
