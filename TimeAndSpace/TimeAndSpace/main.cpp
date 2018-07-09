@@ -38,7 +38,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void loadTextureFile(unsigned int &texture, const char *fileName, int imgType, bool needFlip)
+void loadTextureFile(unsigned int &texture, const char *fileName, GLenum imgType, bool needFlip)
 {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
