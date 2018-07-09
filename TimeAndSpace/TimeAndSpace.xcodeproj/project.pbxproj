@@ -40,6 +40,7 @@
 		4FACCED220EB3F2A00E557F0 /* triangle.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.vs; sourceTree = "<group>"; };
 		4FACCED320EB43EF00E557F0 /* triangle.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.fs; sourceTree = "<group>"; };
 		4FB079E820F2E67100EE3F1B /* wood.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wood.jpg; sourceTree = "<group>"; };
+		4FB079E920F32E4E00EE3F1B /* leaf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leaf.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +125,7 @@
 		4FB079E420F2D28000EE3F1B /* imgs */ = {
 			isa = PBXGroup;
 			children = (
+				4FB079E920F32E4E00EE3F1B /* leaf.png */,
 				4FB079E820F2E67100EE3F1B /* wood.jpg */,
 			);
 			path = imgs;
