@@ -149,6 +149,19 @@ int main()
         2 + 5*4, 3 + 5*4, 5*4
     };
     
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+    
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -200,23 +213,30 @@ int main()
         
         // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
         testShader.use();
-        glm::mat4 model;
-        model = model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-        testShader.setMatrix4("model", glm::value_ptr(model));
-        glm::mat4 view;
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        testShader.setMatrix4("view", glm::value_ptr(view));
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
-        testShader.setMatrix4("projection", glm::value_ptr(projection));
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
-        // the last argument specifies an offset in the EBO
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        
+        for (int i = 0; i < (sizeof(cubePositions) / sizeof(glm::vec3)); i++)
+        {
+            glm::mat4 model;
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            testShader.setMatrix4("model", glm::value_ptr(model));
+            glm::mat4 view;
+            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+            testShader.setMatrix4("view", glm::value_ptr(view));
+            glm::mat4 projection;
+            projection = glm::perspective(glm::radians(45.0f), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
+            testShader.setMatrix4("projection", glm::value_ptr(projection));
+            
+            // the last argument specifies an offset in the EBO
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        }
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
