@@ -97,27 +97,56 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     
     //set up vertex data
-//    // triangle
-//    float vertices[] = {
-//        // position             // color
-//        0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f,
-//        -0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,
-//        0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,
-////        0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,
-//    };
-    
-    // rectangle
     float vertices[] = {
-        // positions            // colors           // texture coords
-        0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,      1.0f, 1.0f, 0.0f,   0.0f, 1.0f
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f
     };
     
     unsigned int indices[] = {
         0, 1, 2,
-        2, 3, 0
+        2, 3, 0,
+        
+        4, 1 + 4, 2 + 4,
+        2 + 4, 3 + 4, 4,
+        
+        2*4, 1 + 2*4, 2 + 2*4,
+        2 + 2*4, 3 + 2*4, 2*4,
+        
+        3*4, 1 + 3*4, 2 + 3*4,
+        2 + 3*4, 3 + 3*4, 3*4,
+        
+        4*4, 1 + 4*4, 2 + 4*4,
+        2 + 4*4, 3 + 4*4, 4*4,
+        
+        5*4, 1 + 5*4, 2 + 5*4,
+        2 + 5*4, 3 + 5*4, 5*4
     };
     
     unsigned int VAO;
@@ -148,27 +177,17 @@ int main()
     // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
     // because vertex attribute is a vec3 so the second parameter is composed of 3 values
     // the forth parameter specifies if the data wanted to be normalized
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     // parameter is the vertex attribute location as its argument
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
     
     testShader.use();
     testShader.setInt("texture1", 0);
     testShader.setInt("texture2", 1);
     
-    glm::mat4 model;
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    testShader.setMatrix4("model", glm::value_ptr(model));
-    glm::mat4 view;
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    testShader.setMatrix4("view", glm::value_ptr(view));
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
-    testShader.setMatrix4("projection", glm::value_ptr(projection));
+    glEnable(GL_DEPTH_TEST);
     
     while(!glfwWindowShouldClose(window))
     {
@@ -177,10 +196,19 @@ int main()
         
         //rendering
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
         testShader.use();
+        glm::mat4 model;
+        model = model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        testShader.setMatrix4("model", glm::value_ptr(model));
+        glm::mat4 view;
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        testShader.setMatrix4("view", glm::value_ptr(view));
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
+        testShader.setMatrix4("projection", glm::value_ptr(projection));
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -188,7 +216,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         // the last argument specifies an offset in the EBO
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
