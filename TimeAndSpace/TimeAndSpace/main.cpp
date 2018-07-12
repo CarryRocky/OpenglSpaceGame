@@ -160,6 +160,16 @@ int main()
     testShader.setInt("texture1", 0);
     testShader.setInt("texture2", 1);
     
+    glm::mat4 model;
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    testShader.setMatrix4("model", glm::value_ptr(model));
+    glm::mat4 view;
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    testShader.setMatrix4("view", glm::value_ptr(view));
+    glm::mat4 projection;
+    projection = glm::perspective(glm::radians(45.0f), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
+    testShader.setMatrix4("projection", glm::value_ptr(projection));
+    
     while(!glfwWindowShouldClose(window))
     {
         // input
@@ -171,11 +181,6 @@ int main()
         
         // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
         testShader.use();
-        
-        glm::mat4 trans;
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        testShader.setMatrix4("transform", glm::value_ptr(trans));
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
