@@ -172,6 +172,11 @@ int main()
         // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
         testShader.use();
         
+        glm::mat4 trans;
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        testShader.setMatrix4("transform", glm::value_ptr(trans));
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);

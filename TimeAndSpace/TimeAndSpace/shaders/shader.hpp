@@ -34,6 +34,7 @@ public:
     void setInt(const string&, int);
     void setFloat(const string&, float);
     void setFloat(const string&, float, float, float, float);
+    void setMatrix4(const string&, float*);
 
 private:
     void compileShader(unsigned int, const char*);
