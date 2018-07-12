@@ -25,11 +25,76 @@ using namespace std;
 #define WIN_WIDTH 1200
 #define WIN_HEIGHT 750
 
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
+float deltaTime = 0.0f;     // Time between current frame and last frame
+float lastFrame = 0.0f;     // Time of last frame
+
+float lastX = 0.0f, lastY = 0.0f;
+float yaw = -90.0f, pitch = 0.0f;
+float fov = 45.0f;
+bool firstMouse = true;
+
 // keep all input code organized
 void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    
+    float cameraSpeed = 2.5f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if(firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+    
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;   // reversed since y-coordinates range from bottom to top
+    lastX = xpos;
+    lastY = ypos;
+    
+    float sensitivity = 0.05f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+    
+    yaw   += xoffset;
+    pitch += yoffset;
+    
+    if(pitch > 89.0f)
+        pitch =  89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+    
+    glm::vec3 front;
+    front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+    front.y = sin(glm::radians(pitch));
+    front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+    cameraFront = glm::normalize(front);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    if(fov >= 1.0f && fov <= 45.0f)
+        fov -= yoffset;
+    if(fov <= 1.0f)
+        fov = 1.0f;
+    if(fov >= 45.0f)
+        fov = 45.0f;
 }
 
 // adjust the viewport when user resizes the window
@@ -95,6 +160,8 @@ int main()
     }
     
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback); 
     
     //set up vertex data
     float vertices[] = {
@@ -202,8 +269,15 @@ int main()
     
     glEnable(GL_DEPTH_TEST);
     
+    // hide the cursor
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    
     while(!glfwWindowShouldClose(window))
     {
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        
         // input
         processInput(window);
         
@@ -220,6 +294,13 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         
+        glm::mat4 view;
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        testShader.setMatrix4("view", glm::value_ptr(view));
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(fov), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
+        testShader.setMatrix4("projection", glm::value_ptr(projection));
+        
         for (int i = 0; i < (sizeof(cubePositions) / sizeof(glm::vec3)); i++)
         {
             glm::mat4 model;
@@ -227,12 +308,6 @@ int main()
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             testShader.setMatrix4("model", glm::value_ptr(model));
-            glm::mat4 view;
-            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
-            testShader.setMatrix4("view", glm::value_ptr(view));
-            glm::mat4 projection;
-            projection = glm::perspective(glm::radians(45.0f), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
-            testShader.setMatrix4("projection", glm::value_ptr(projection));
             
             // the last argument specifies an offset in the EBO
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);

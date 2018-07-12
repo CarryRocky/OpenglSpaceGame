@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4F130BB720E6EA8200A38FBA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB620E6EA8200A38FBA /* OpenGL.framework */; };
 		4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */; };
+		4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7704BD20F72DAC00C11997 /* camera.cpp */; };
 		4F8998A620E6C24100F8493B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8998A520E6C24100F8493B /* main.cpp */; };
 		4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F97EE1520EF0C14009CCED2 /* shader.cpp */; };
 		4F97F13520EF4111009CCED2 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F13420EF4111009CCED2 /* glad.c */; };
@@ -30,6 +31,8 @@
 /* Begin PBXFileReference section */
 		4F130BB620E6EA8200A38FBA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
+		4F7704BD20F72DAC00C11997 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
+		4F7704BE20F72DAC00C11997 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F8998A520E6C24100F8493B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4F97EE1520EF0C14009CCED2 /* shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
@@ -73,6 +76,15 @@
 			path = gladScr;
 			sourceTree = "<group>";
 		};
+		4F7704BC20F72D9600C11997 /* camera */ = {
+			isa = PBXGroup;
+			children = (
+				4F7704BD20F72DAC00C11997 /* camera.cpp */,
+				4F7704BE20F72DAC00C11997 /* camera.hpp */,
+			);
+			path = camera;
+			sourceTree = "<group>";
+		};
 		4F89989920E6C24100F8493B = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +105,7 @@
 		4F8998A420E6C24100F8493B /* TimeAndSpace */ = {
 			isa = PBXGroup;
 			children = (
+				4F7704BC20F72D9600C11997 /* camera */,
 				4FB079E420F2D28000EE3F1B /* imgs */,
 				4FACCED120EB3F1600E557F0 /* shaders */,
 				4FACCECD20EB3D8000E557F0 /* helpers */,
@@ -191,6 +204,7 @@
 				4F8998A620E6C24100F8493B /* main.cpp in Sources */,
 				4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */,
 				4F97F13520EF4111009CCED2 /* glad.c in Sources */,
+				4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
