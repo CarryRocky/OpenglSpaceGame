@@ -23,7 +23,7 @@ using namespace std;
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define WIN_WIDTH 1200
+#define WIN_WIDTH 750
 #define WIN_HEIGHT 750
 
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
@@ -33,7 +33,7 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 float deltaTime = 0.0f;     // Time between current frame and last frame
 float lastFrame = 0.0f;     // Time of last frame
 
-float lastX = 0.0f, lastY = 0.0f;
+float lastX = float(WIN_WIDTH/2), lastY = float(WIN_HEIGHT/2);
 float yaw = -90.0f, pitch = 0.0f;
 float fov = 45.0f;
 bool firstMouse = true;
@@ -53,6 +53,20 @@ void processInput(GLFWwindow *window)
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+    {
+        cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+        cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        pitch = 0.0f;
+    }
+    
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+    {
+        cameraPos   = glm::vec3(0.0f, 3.0f,  3.0f);
+        cameraFront = glm::normalize(glm::vec3(0.0f, -1.0f, -1.0f)) ;
+        pitch = -45.0f;
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -139,20 +153,26 @@ void sphereVecPushBack(vector<float> &newVec, glm::vec3 p1, glm::vec3 p2, glm::v
     newVec.push_back(p1.x);
     newVec.push_back(p1.y);
     newVec.push_back(p1.z);
-    newVec.push_back(0.0f);
-    newVec.push_back(0.0f);
+//    newVec.push_back(0.0f);
+//    newVec.push_back(0.0f);
+    newVec.push_back(p1.x + 0.5);
+    newVec.push_back(p1.y + 0.5);
     
     newVec.push_back(p2.x);
     newVec.push_back(p2.y);
     newVec.push_back(p2.z);
-    newVec.push_back(1.0f);
-    newVec.push_back(0.0f);
+//    newVec.push_back(1.0f);
+//    newVec.push_back(0.0f);
+    newVec.push_back(p2.x + 0.5);
+    newVec.push_back(p2.y + 0.5);
     
     newVec.push_back(p3.x);
     newVec.push_back(p3.y);
     newVec.push_back(p3.z);
-    newVec.push_back(0.5f);
-    newVec.push_back(1.0f);
+//    newVec.push_back(0.5f);
+//    newVec.push_back(1.0f);
+    newVec.push_back(p3.x + 0.5);
+    newVec.push_back(p3.y + 0.5);
 }
 
 void buildSphere(vector<float> &sphereVec)
@@ -251,10 +271,11 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sphereVec.size()*sizeof(float), vertices, GL_STATIC_DRAW);
     
     // texture
-    unsigned int texture1, texture2;
+    unsigned int texture1, texture2, texture3;
     // load and generate the texture
-    loadTextureFile(texture1, "imgs/wood.jpg", GL_RGB, true);
-    loadTextureFile(texture2, "imgs/leaf.png", GL_RGBA, true);
+    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
+    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
+    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
     
     Shader testShader("shaders/triangle.vs","shaders/triangle.fs");
     
@@ -306,11 +327,38 @@ int main()
         projection = glm::perspective(glm::radians(fov), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
         testShader.setMatrix4("projection", glm::value_ptr(projection));
         glm::mat4 model;
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         testShader.setMatrix4("model", glm::value_ptr(model));
         
 //        // the last argument specifies an offset in the EBO
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glm::mat4 model2;
+        float radius = 0.8f;
+        float earthX = sin(glfwGetTime()) * radius;
+        float earthZ = cos(glfwGetTime()) * radius;
+        model2 = glm::translate(model2, glm::vec3(earthX, 0.0f, earthZ));
+        model2 = glm::rotate(model2, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model2 = glm::scale(model2, glm::vec3(0.1f, 0.1f, 0.1f));
+        testShader.setMatrix4("model", glm::value_ptr(model2));
+        
+        glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture3);
+        glm::mat4 model3;
+        float radius2 = 0.25f;
+        float earthX2 = sin(glfwGetTime()*4) * radius2;
+        float earthZ2 = cos(glfwGetTime()*4) * radius2;
+        model3 = glm::translate(model3, glm::vec3(earthX2, 0.0f, earthZ2) + glm::vec3(earthX, 0.0f, earthZ));
+        model3 = glm::rotate(model3, (float)glfwGetTime() * glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model3 = glm::scale(model3, glm::vec3(0.04f, 0.04f, 0.04f));
+        testShader.setMatrix4("model", glm::value_ptr(model3));
+    
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
         glfwSwapBuffers(window);

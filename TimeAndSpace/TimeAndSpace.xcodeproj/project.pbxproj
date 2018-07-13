@@ -29,6 +29,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4F015CC120F93AAA003AF339 /* moon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon.jpg; sourceTree = "<group>"; };
+		4F015CC220F93AAA003AF339 /* sun.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sun.jpg; sourceTree = "<group>"; };
+		4F015CC320F93AAA003AF339 /* earth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earth.jpg; sourceTree = "<group>"; };
 		4F130BB620E6EA8200A38FBA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
 		4F7704BD20F72DAC00C11997 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
@@ -138,6 +141,9 @@
 		4FB079E420F2D28000EE3F1B /* imgs */ = {
 			isa = PBXGroup;
 			children = (
+				4F015CC320F93AAA003AF339 /* earth.jpg */,
+				4F015CC120F93AAA003AF339 /* moon.jpg */,
+				4F015CC220F93AAA003AF339 /* sun.jpg */,
 				4FB079E920F32E4E00EE3F1B /* leaf.png */,
 				4FB079E820F2E67100EE3F1B /* wood.jpg */,
 			);
