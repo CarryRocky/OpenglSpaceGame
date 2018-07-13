@@ -15,6 +15,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #include "shader.hpp"
@@ -133,6 +134,52 @@ void loadTextureFile(unsigned int &texture, const char *fileName, GLenum imgType
     stbi_image_free(data);
 }
 
+void sphereVecPushBack(vector<float> &newVec, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
+{
+    newVec.push_back(p1.x);
+    newVec.push_back(p1.y);
+    newVec.push_back(p1.z);
+    newVec.push_back(0.0f);
+    newVec.push_back(0.0f);
+    
+    newVec.push_back(p2.x);
+    newVec.push_back(p2.y);
+    newVec.push_back(p2.z);
+    newVec.push_back(1.0f);
+    newVec.push_back(0.0f);
+    
+    newVec.push_back(p3.x);
+    newVec.push_back(p3.y);
+    newVec.push_back(p3.z);
+    newVec.push_back(0.5f);
+    newVec.push_back(1.0f);
+}
+
+void buildSphere(vector<float> &sphereVec)
+{
+    for (int j = 0;j < 6;j++)
+    {
+        vector<float> newVec;
+        for (int i = 0;i < sphereVec.size();i = i + 15)
+        {
+            glm::vec3 point_1(sphereVec[i], sphereVec[i + 1], sphereVec[i + 2]);
+            glm::vec3 point_2(sphereVec[i + 5], sphereVec[i + 6], sphereVec[i + 7]);
+            glm::vec3 point_3(sphereVec[i + 10], sphereVec[i + 11], sphereVec[i + 12]);
+            
+            glm::vec3 mid_1 = glm::normalize((point_1 + point_2)/2.0f);
+            glm::vec3 mid_2 = glm::normalize((point_1 + point_3)/2.0f);
+            glm::vec3 mid_3 = glm::normalize((point_2 + point_3)/2.0f);
+            
+            sphereVecPushBack(newVec, point_1, mid_1, mid_2);
+            sphereVecPushBack(newVec, mid_1, point_2, mid_3);
+            sphereVecPushBack(newVec, mid_3, mid_2, mid_1);
+            sphereVecPushBack(newVec, mid_2, mid_3, point_3);
+        }
+        
+        sphereVec = newVec;
+    }
+}
+
 int main()
 {
     glfwInit();
@@ -163,71 +210,34 @@ int main()
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback); 
     
+    float rootSix = sqrt(6);
+    float rootThree = sqrt(3);
     //set up vertex data
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    float init_vertices[] = {
+        rootSix/3, 0.0f, -rootThree/3,      0.0f, 0.0f,
+        -rootSix/3, 0.0f, -rootThree/3,     1.0f, 0.0f,
+        0.0f, rootSix/3, rootThree/3,       0.5f, 1.0f,
         
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f
+        0.0f, -rootSix/3, rootThree/3,      0.0f, 0.0f,
+        rootSix/3, 0.0f, -rootThree/3,      1.0f, 0.0f,
+        0.0f, rootSix/3, rootThree/3,       0.5f, 1.0f,
+
+        -rootSix/3, 0.0f, -rootThree/3,     0.0f, 0.0f,
+        0.0f, -rootSix/3, rootThree/3,      1.0f, 0.0f,
+        0.0f, rootSix/3, rootThree/3,       0.5f, 1.0f,
+
+        -rootSix/3, 0.0f, -rootThree/3,     0.0f, 0.0f,
+        rootSix/3, 0.0f, -rootThree/3,      1.0f, 0.0f,
+        0.0f, -rootSix/3, rootThree/3,      0.5f, 1.0f,
     };
     
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-        
-        4, 1 + 4, 2 + 4,
-        2 + 4, 3 + 4, 4,
-        
-        2*4, 1 + 2*4, 2 + 2*4,
-        2 + 2*4, 3 + 2*4, 2*4,
-        
-        3*4, 1 + 3*4, 2 + 3*4,
-        2 + 3*4, 3 + 3*4, 3*4,
-        
-        4*4, 1 + 4*4, 2 + 4*4,
-        2 + 4*4, 3 + 4*4, 4*4,
-        
-        5*4, 1 + 5*4, 2 + 5*4,
-        2 + 5*4, 3 + 5*4, 5*4
-    };
-    
-    glm::vec3 cubePositions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f),
-        glm::vec3( 2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
+    vector<float> sphereVec(begin(init_vertices),end(init_vertices));
+    buildSphere(sphereVec);
+    float *vertices = new float[sphereVec.size()];
+    for (int i = 0;i < sphereVec.size();i++)
+    {
+        vertices[i] = sphereVec[i];
+    }
     
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
@@ -238,12 +248,7 @@ int main()
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // the paramater GL_STATIC_DEAW means: the data will most likely not change at all or very rarely
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sphereVec.size()*sizeof(float), vertices, GL_STATIC_DRAW);
     
     // texture
     unsigned int texture1, texture2;
@@ -265,7 +270,7 @@ int main()
     
     testShader.use();
     testShader.setInt("texture1", 0);
-    testShader.setInt("texture2", 1);
+//    testShader.setInt("texture2", 1);
     
     glEnable(GL_DEPTH_TEST);
     
@@ -290,8 +295,8 @@ int main()
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         
         glm::mat4 view;
@@ -300,18 +305,13 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(fov), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
         testShader.setMatrix4("projection", glm::value_ptr(projection));
+        glm::mat4 model;
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        testShader.setMatrix4("model", glm::value_ptr(model));
         
-        for (int i = 0; i < (sizeof(cubePositions) / sizeof(glm::vec3)); i++)
-        {
-            glm::mat4 model;
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            testShader.setMatrix4("model", glm::value_ptr(model));
-            
-            // the last argument specifies an offset in the EBO
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        }
+//        // the last argument specifies an offset in the EBO
+//        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
@@ -320,5 +320,7 @@ int main()
     
     // properly clean all resources that were allocated
     glfwTerminate();
+    
+    delete []vertices;
     return 0;
 }
