@@ -155,24 +155,24 @@ void sphereVecPushBack(vector<float> &newVec, glm::vec3 p1, glm::vec3 p2, glm::v
     newVec.push_back(p1.z);
 //    newVec.push_back(0.0f);
 //    newVec.push_back(0.0f);
-    newVec.push_back(p1.x + 0.5);
-    newVec.push_back(p1.y + 0.5);
+    newVec.push_back(0.5 * p1.x + 0.5);
+    newVec.push_back(0.5 * p1.y + 0.5);
     
     newVec.push_back(p2.x);
     newVec.push_back(p2.y);
     newVec.push_back(p2.z);
 //    newVec.push_back(1.0f);
 //    newVec.push_back(0.0f);
-    newVec.push_back(p2.x + 0.5);
-    newVec.push_back(p2.y + 0.5);
+    newVec.push_back(0.5 * p2.x + 0.5);
+    newVec.push_back(0.5 * p2.y + 0.5);
     
     newVec.push_back(p3.x);
     newVec.push_back(p3.y);
     newVec.push_back(p3.z);
 //    newVec.push_back(0.5f);
 //    newVec.push_back(1.0f);
-    newVec.push_back(p3.x + 0.5);
-    newVec.push_back(p3.y + 0.5);
+    newVec.push_back(0.5 * p3.x + 0.5);
+    newVec.push_back(0.5 * p3.y + 0.5);
 }
 
 void buildSphere(vector<float> &sphereVec)
