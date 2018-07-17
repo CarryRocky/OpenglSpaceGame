@@ -33,6 +33,7 @@ public:
     void setBool(const string&, bool);
     void setInt(const string&, int);
     void setFloat(const string&, float);
+    void setFloat(const string&, float, float, float);
     void setFloat(const string&, float, float, float, float);
     void setMatrix4(const string&, float*);
 

@@ -80,6 +80,11 @@ void Shader::setFloat(const string &name, float value1, float value2, float valu
     glUniform4f(glGetUniformLocation(ID, name.c_str()), value1, value2, value3, value4);
 }
 
+void Shader::setFloat(const string &name, float value1, float value2, float value3)
+{
+    glUniform3f(glGetUniformLocation(ID, name.c_str()), value1, value2, value3);
+}
+
 void Shader::setMatrix4(const std::string &name, float *matrix)
 {
     // the second argument tells OpenGL how many matrices to send

@@ -34,6 +34,10 @@
 		4F015CC320F93AAA003AF339 /* earth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earth.jpg; sourceTree = "<group>"; };
 		4F130BB620E6EA8200A38FBA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
+		4F4BF3E220FD56E900876BB2 /* light.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.vs; sourceTree = "<group>"; };
+		4F4BF3E320FD56FD00876BB2 /* light.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.fs; sourceTree = "<group>"; };
+		4F4BF3E420FD576F00876BB2 /* source.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.vs; sourceTree = "<group>"; };
+		4F4BF3E520FD578200876BB2 /* source.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.fs; sourceTree = "<group>"; };
 		4F7704BD20F72DAC00C11997 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		4F7704BE20F72DAC00C11997 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,6 +138,10 @@
 				4FACCED320EB43EF00E557F0 /* triangle.fs */,
 				4F97EE1520EF0C14009CCED2 /* shader.cpp */,
 				4F97EE1620EF0C14009CCED2 /* shader.hpp */,
+				4F4BF3E220FD56E900876BB2 /* light.vs */,
+				4F4BF3E320FD56FD00876BB2 /* light.fs */,
+				4F4BF3E420FD576F00876BB2 /* source.vs */,
+				4F4BF3E520FD578200876BB2 /* source.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

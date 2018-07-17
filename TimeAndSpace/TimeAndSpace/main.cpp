@@ -170,6 +170,22 @@ void buildSphere(vector<float> &sphereVec)
     }
 }
 
+void bindSphereVBO(unsigned int VBO, vector<float> &sphereVec, float *vertices)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // the paramater GL_STATIC_DEAW means: the data will most likely not change at all or very rarely
+    glBufferData(GL_ARRAY_BUFFER, sphereVec.size()*sizeof(float), vertices, GL_STATIC_DRAW);
+    // the first parameter specifies which vertex attribute to configure
+    // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
+    // because vertex attribute is a vec3 so the second parameter is composed of 3 values
+    // the forth parameter specifies if the data wanted to be normalized
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    // parameter is the vertex attribute location as its argument
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+}
+
 int main()
 {
     glfwInit();
@@ -229,39 +245,35 @@ int main()
         vertices[i] = sphereVec[i];
     }
     
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    
     // the advantage of using those buffer objects is that we can send large batches of data all at once to the graphics card without having to send data a vertex a time
     unsigned int VBO;
     glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // the paramater GL_STATIC_DEAW means: the data will most likely not change at all or very rarely
-    glBufferData(GL_ARRAY_BUFFER, sphereVec.size()*sizeof(float), vertices, GL_STATIC_DRAW);
     
-    // texture
-    unsigned int texture1, texture2, texture3;
-    // load and generate the texture
-    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
-    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
-    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    bindSphereVBO(VBO, sphereVec, vertices);
     
-    Shader testShader("shaders/triangle.vs","shaders/triangle.fs");
+    unsigned int lightVAO;
+    glGenVertexArrays(1, &lightVAO);
+    glBindVertexArray(lightVAO);
+    bindSphereVBO(VBO, sphereVec, vertices);
     
-    // the first parameter specifies which vertex attribute to configure
-    // pass 0 because has specified the location of the position vertex attribute in the vertex shader with layout (location = 0)
-    // because vertex attribute is a vec3 so the second parameter is composed of 3 values
-    // the forth parameter specifies if the data wanted to be normalized
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    // parameter is the vertex attribute location as its argument
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+//    // texture
+//    unsigned int texture1, texture2, texture3;
+//    // load and generate the texture
+//    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
+//    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
+//    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
+//
+//    Shader testShader("shaders/triangle.vs", "shaders/triangle.fs");
+//
+//    testShader.use();
+//    testShader.setInt("texture1", 0);
+////    testShader.setInt("texture2", 1);
     
-    testShader.use();
-    testShader.setInt("texture1", 0);
-//    testShader.setInt("texture2", 1);
+    Shader lightSourceShader("shaders/source.vs", "shaders/source.fs");
+    Shader lightObjShader("shaders/light.vs", "shaders/light.fs");
     
     glEnable(GL_DEPTH_TEST);
     
@@ -281,32 +293,43 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
-        testShader.use();
+//        // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
+//        testShader.use();
+//
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, texture1);
+////        glActiveTexture(GL_TEXTURE1);
+////        glBindTexture(GL_TEXTURE_2D, texture2);
+//        glBindVertexArray(VAO);
         
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-//        glActiveTexture(GL_TEXTURE1);
-//        glBindTexture(GL_TEXTURE_2D, texture2);
-        glBindVertexArray(VAO);
+        lightSourceShader.use();
+        glBindVertexArray(lightVAO);
         
         glm::mat4 view;
         view = camera.getViewMatrix();
-        testShader.setMatrix4("view", glm::value_ptr(view));
+        lightSourceShader.setMatrix4("view", glm::value_ptr(view));
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(camera.getZoom()), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
-        testShader.setMatrix4("projection", glm::value_ptr(projection));
+        lightSourceShader.setMatrix4("projection", glm::value_ptr(projection));
         glm::mat4 model;
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-        testShader.setMatrix4("model", glm::value_ptr(model));
+        lightSourceShader.setMatrix4("model", glm::value_ptr(model));
         
 //        // the last argument specifies an offset in the EBO
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture2);
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, texture2);
+        lightObjShader.use();
+        glBindVertexArray(VAO);
+        
+        lightObjShader.setFloat("objectColor", 1.0f, 0.5f, 0.31f);
+        lightObjShader.setFloat("lightColor",  1.0f, 1.0f, 1.0f);
+        lightObjShader.setMatrix4("view", glm::value_ptr(view));
+        lightObjShader.setMatrix4("projection", glm::value_ptr(projection));
+        
         glm::mat4 model2;
         float radius = 0.8f;
         float earthX = sin(glfwGetTime()) * radius;
@@ -314,12 +337,12 @@ int main()
         model2 = glm::translate(model2, glm::vec3(earthX, 0.0f, earthZ));
         model2 = glm::rotate(model2, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model2 = glm::scale(model2, glm::vec3(0.1f, 0.1f, 0.1f));
-        testShader.setMatrix4("model", glm::value_ptr(model2));
+        lightObjShader.setMatrix4("model", glm::value_ptr(model2));
         
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture3);
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, texture3);
         glm::mat4 model3;
         float radius2 = 0.25f;
         float earthX2 = sin(glfwGetTime()*4) * radius2;
@@ -327,7 +350,7 @@ int main()
         model3 = glm::translate(model3, glm::vec3(earthX2, 0.0f, earthZ2) + glm::vec3(earthX, 0.0f, earthZ));
         model3 = glm::rotate(model3, (float)glfwGetTime() * glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model3 = glm::scale(model3, glm::vec3(0.04f, 0.04f, 0.04f));
-        testShader.setMatrix4("model", glm::value_ptr(model3));
+        lightObjShader.setMatrix4("model", glm::value_ptr(model3));
     
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
