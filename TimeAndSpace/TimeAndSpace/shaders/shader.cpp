@@ -85,9 +85,14 @@ void Shader::setFloat(const string &name, float value1, float value2, float valu
     glUniform3f(glGetUniformLocation(ID, name.c_str()), value1, value2, value3);
 }
 
-void Shader::setMatrix4(const std::string &name, float *matrix)
+void Shader::setMatrix4(const string &name, float *matrix)
 {
     // the second argument tells OpenGL how many matrices to send
     // the third argument asks whether to swap the columns and rows or not
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, matrix);
+}
+
+void Shader::setVec3(const string &name, const glm::vec3 &vec)
+{
+    glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &vec[0]);
 }

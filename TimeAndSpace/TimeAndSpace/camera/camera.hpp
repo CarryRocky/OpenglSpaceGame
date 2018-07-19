@@ -76,6 +76,11 @@ public:
         return Zoom;
     }
     
+    glm::vec3 getPosition()
+    {
+        return Position;
+    }
+    
 private:
     void updateCameraVectors();
     

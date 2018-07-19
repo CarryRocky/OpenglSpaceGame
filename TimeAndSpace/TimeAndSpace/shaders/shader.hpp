@@ -36,6 +36,7 @@ public:
     void setFloat(const string&, float, float, float);
     void setFloat(const string&, float, float, float, float);
     void setMatrix4(const string&, float*);
+    void setVec3(const string&, const glm::vec3&);
 
 private:
     void compileShader(unsigned int, const char*);

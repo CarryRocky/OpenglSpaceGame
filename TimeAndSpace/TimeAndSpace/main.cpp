@@ -147,7 +147,7 @@ void sphereVecPushBack(vector<float> &newVec, glm::vec3 p1, glm::vec3 p2, glm::v
 
 void buildSphere(vector<float> &sphereVec)
 {
-    for (int j = 0;j < 6;j++)
+    for (int j = 0;j < 8;j++)
     {
         vector<float> newVec;
         for (int i = 0;i < sphereVec.size();i = i + 15)
@@ -304,7 +304,7 @@ int main()
         
         lightSourceShader.use();
         glBindVertexArray(lightVAO);
-        
+
         glm::mat4 view;
         view = camera.getViewMatrix();
         lightSourceShader.setMatrix4("view", glm::value_ptr(view));
@@ -315,7 +315,7 @@ int main()
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         lightSourceShader.setMatrix4("model", glm::value_ptr(model));
-        
+
 //        // the last argument specifies an offset in the EBO
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
@@ -325,33 +325,52 @@ int main()
         lightObjShader.use();
         glBindVertexArray(VAO);
         
-        lightObjShader.setFloat("objectColor", 1.0f, 0.5f, 0.31f);
-        lightObjShader.setFloat("lightColor",  1.0f, 1.0f, 1.0f);
+        // the ambient light is usually set to a low intensity, otherwise it'll be too dominant
+        lightObjShader.setFloat("light.ambient",  0.2f, 0.2f, 0.2f);
+        // the diffuse component of a light source is usually set to the exact color a light to have
+        // often a bright white color
+        lightObjShader.setFloat("light.diffuse",  0.5f, 0.5f, 0.5f);
+        // the specular component is usually kept at vec3(1.0) shining at full intensity
+        lightObjShader.setFloat("light.specular", 1.0f, 1.0f, 1.0f);
+        lightObjShader.setFloat("light.position", 0.0f, 0.0f, 1.0f);
+        lightObjShader.setVec3("viewPos", camera.getPosition());
+        
+        lightObjShader.setFloat("material.ambient",  1.0f, 0.5f, 0.31f);
+        lightObjShader.setFloat("material.diffuse",  1.0f, 0.5f, 0.31f);
+        lightObjShader.setFloat("material.specular", 0.5f, 0.5f, 0.5f);
+        lightObjShader.setFloat("material.shininess", 32.0f);
+        
         lightObjShader.setMatrix4("view", glm::value_ptr(view));
         lightObjShader.setMatrix4("projection", glm::value_ptr(projection));
         
         glm::mat4 model2;
+        glm::mat4 rotateUniform2;
         float radius = 0.8f;
         float earthX = sin(glfwGetTime()) * radius;
         float earthZ = cos(glfwGetTime()) * radius;
         model2 = glm::translate(model2, glm::vec3(earthX, 0.0f, earthZ));
-        model2 = glm::rotate(model2, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        rotateUniform2 = glm::rotate(rotateUniform2, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model2 *= rotateUniform2;
         model2 = glm::scale(model2, glm::vec3(0.1f, 0.1f, 0.1f));
         lightObjShader.setMatrix4("model", glm::value_ptr(model2));
+        lightObjShader.setMatrix4("rotation", glm::value_ptr(rotateUniform2));
         
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
 //        glActiveTexture(GL_TEXTURE0);
 //        glBindTexture(GL_TEXTURE_2D, texture3);
         glm::mat4 model3;
+        glm::mat4 rotateUniform3;
         float radius2 = 0.25f;
         float earthX2 = sin(glfwGetTime()*4) * radius2;
         float earthZ2 = cos(glfwGetTime()*4) * radius2;
         model3 = glm::translate(model3, glm::vec3(earthX2, 0.0f, earthZ2) + glm::vec3(earthX, 0.0f, earthZ));
-        model3 = glm::rotate(model3, (float)glfwGetTime() * glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        rotateUniform3 = glm::rotate(rotateUniform3, (float)glfwGetTime() * glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model3 *= rotateUniform3;
         model3 = glm::scale(model3, glm::vec3(0.04f, 0.04f, 0.04f));
         lightObjShader.setMatrix4("model", glm::value_ptr(model3));
-    
+        lightObjShader.setMatrix4("rotation", glm::value_ptr(rotateUniform3));
+
         glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         
         glfwSwapBuffers(window);
