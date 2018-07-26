@@ -16,7 +16,10 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 using namespace std;
+
+#include "planetConfig.h"
 
 #include "shader.hpp"
 #include "camera.hpp"
@@ -27,7 +30,7 @@ using namespace std;
 #define WIN_WIDTH 750
 #define WIN_HEIGHT 750
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
 float deltaTime = 0.0f;     // time between current frame and last frame
 float lastFrame = 0.0f;     // time of last frame
@@ -52,7 +55,7 @@ void processInput(GLFWwindow *window)
     
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
     {
-        camera.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+        camera.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
         camera.setFront(glm::vec3(0.0f, 0.0f, -1.0f));
         camera.setPitch(0.0f);
     }
@@ -186,6 +189,92 @@ void bindSphereVBO(unsigned int VBO, vector<float> &sphereVec, float *vertices)
     glEnableVertexAttribArray(1);
 }
 
+unsigned int loadCubemap(vector<string> faces)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    
+    int width, height, nrChannels;
+    for (unsigned int i = 0; i < faces.size(); i++)
+    {
+        unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+                         );
+            stbi_image_free(data);
+        }
+        else
+        {
+            cout << "Cubemap texture failed to load at path: " << faces[i] << endl;
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    
+    return textureID;
+}
+
+void createStars(Shader *curShader, int sid)
+{
+    Star curStar = sArray[sid];
+    glm::mat4 model;
+    model = glm::translate(model, curStar.pos);
+    model = glm::rotate(model, (float)glfwGetTime() * glm::radians(curStar.selfSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
+    float scale = curStar.scale;
+    model = glm::scale(model, glm::vec3(scale, scale, scale));
+    curShader->setMatrix4("model", glm::value_ptr(model));
+}
+
+void createPlanets(Shader *curShader, int pid, vector<glm::vec3> &curOffset)
+{
+    Planet curPlanet = pArray[pid];
+    glm::vec3 fatherPos = sArray[curPlanet.fatherId - 1].pos;
+    curShader->setVec3("light.position", fatherPos);
+    
+    glm::mat4 model;
+    glm::mat4 rotateUniform;
+    float radius = curPlanet.radius;
+    float earthX = sin(glfwGetTime() * curPlanet.rotateSpeed) * radius;
+    float earthZ = cos(glfwGetTime() * curPlanet.rotateSpeed) * radius;
+    glm::vec3 offsetVec = glm::vec3(earthX, 0.0f, earthZ) + fatherPos;
+    curOffset.push_back(offsetVec);
+    model = glm::translate(model, offsetVec);
+    rotateUniform = glm::rotate(rotateUniform, (float)glfwGetTime() * glm::radians(curPlanet.selfSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
+    model *= rotateUniform;
+    float scale = curPlanet.scale;
+    model = glm::scale(model, glm::vec3(scale, scale, scale));
+    curShader->setMatrix4("model", glm::value_ptr(model));
+    curShader->setMatrix4("rotation", glm::value_ptr(rotateUniform));
+}
+
+void createMoons(Shader *curShader, int mid, glm::vec3 previousOffset)
+{
+    Moon curMoon = mArray[mid];
+    int sunId = pArray[curMoon.fatherId - 1].fatherId;
+    curShader->setVec3("light.position", sArray[sunId - 1].pos);
+    
+    glm::mat4 model;
+    glm::mat4 rotateUniform;
+    float radius = curMoon.radius;
+    float moonX = sin(glfwGetTime() * curMoon.rotateSpeed) * radius;
+    float moonZ = cos(glfwGetTime() * curMoon.rotateSpeed) * radius;
+    glm::vec3 offsetVec = glm::vec3(moonX, 0.0f, moonZ) + previousOffset;
+    model = glm::translate(model, offsetVec);
+    rotateUniform = glm::rotate(rotateUniform, (float)glfwGetTime() * glm::radians(curMoon.selfSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
+    model *= rotateUniform;
+    float scale = curMoon.scale;
+    model = glm::scale(model, glm::vec3(scale, scale, scale));
+    curShader->setMatrix4("model", glm::value_ptr(model));
+    curShader->setMatrix4("rotation", glm::value_ptr(rotateUniform));
+}
+
 int main()
 {
     glfwInit();
@@ -245,6 +334,64 @@ int main()
         vertices[i] = sphereVec[i];
     }
     
+    float skyboxVertices[] = {
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+        
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+        
+        -1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+        
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+        1.0f, -1.0f,  1.0f
+    };
+    
+    // skybox VAO
+    unsigned int skyboxVAO, skyboxVBO;
+    glGenVertexArrays(1, &skyboxVAO);
+    glGenBuffers(1, &skyboxVBO);
+    glBindVertexArray(skyboxVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    Shader skyboxShader("shaders/skybox.vs", "shaders/skybox.fs");
+    skyboxShader.use();
+    skyboxShader.setInt("skybox", 0);
+    
     // the advantage of using those buffer objects is that we can send large batches of data all at once to the graphics card without having to send data a vertex a time
     unsigned int VBO;
     glGenBuffers(1, &VBO);
@@ -259,21 +406,33 @@ int main()
     glBindVertexArray(lightVAO);
     bindSphereVBO(VBO, sphereVec, vertices);
     
-//    // texture
-//    unsigned int texture1, texture2, texture3;
-//    // load and generate the texture
-//    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
-//    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
-//    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
-//
-//    Shader testShader("shaders/triangle.vs", "shaders/triangle.fs");
-//
-//    testShader.use();
-//    testShader.setInt("texture1", 0);
-////    testShader.setInt("texture2", 1);
+    vector<string> faces
+    {
+        "imgs/right.tga",
+        "imgs/left.tga",
+        "imgs/top.tga",
+        "imgs/bottom.tga",
+        "imgs/front.tga",
+        "imgs/back.tga"
+    };
+    unsigned int cubemapTexture = loadCubemap(faces);
+    
+    // texture
+    unsigned int texture1, texture2, texture3;
+    // load and generate the texture
+    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
+    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
+    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
+
+    Shader lightObjShader("shaders/light.vs", "shaders/light.fs");
+
+    // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
+    lightObjShader.use();
+    lightObjShader.setInt("material.diffuse", 0);
     
     Shader lightSourceShader("shaders/source.vs", "shaders/source.fs");
-    Shader lightObjShader("shaders/light.vs", "shaders/light.fs");
+    lightSourceShader.use();
+    lightSourceShader.setInt("texture1", 0);
     
     glEnable(GL_DEPTH_TEST);
     
@@ -293,85 +452,81 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-//        // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
-//        testShader.use();
-//
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, texture1);
-////        glActiveTexture(GL_TEXTURE1);
-////        glBindTexture(GL_TEXTURE_2D, texture2);
-//        glBindVertexArray(VAO);
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(camera.getZoom()), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
         
+        // sun
         lightSourceShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
         glBindVertexArray(lightVAO);
 
         glm::mat4 view;
         view = camera.getViewMatrix();
         lightSourceShader.setMatrix4("view", glm::value_ptr(view));
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(camera.getZoom()), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
         lightSourceShader.setMatrix4("projection", glm::value_ptr(projection));
-        glm::mat4 model;
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-        lightSourceShader.setMatrix4("model", glm::value_ptr(model));
-
+        
+        for (int i = 0; i < sArray.size(); i++)
+        {
+            createStars(&lightSourceShader, i);
 //        // the last argument specifies an offset in the EBO
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+            glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        }
         
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, texture2);
+        // earth
         lightObjShader.use();
+        glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         
+        lightObjShader.setFloat("light.constant", 1.0f);
+        lightObjShader.setFloat("light.linear", 0.027f);
+        lightObjShader.setFloat("light.quadratic", 0.0028f);
+        
         // the ambient light is usually set to a low intensity, otherwise it'll be too dominant
-        lightObjShader.setFloat("light.ambient",  0.2f, 0.2f, 0.2f);
+        lightObjShader.setFloat("light.ambient", 0.2f, 0.2f, 0.2f);
         // the diffuse component of a light source is usually set to the exact color a light to have
         // often a bright white color
-        lightObjShader.setFloat("light.diffuse",  0.5f, 0.5f, 0.5f);
+        lightObjShader.setFloat("light.diffuse", 0.9f, 0.9f, 0.9f);
         // the specular component is usually kept at vec3(1.0) shining at full intensity
         lightObjShader.setFloat("light.specular", 1.0f, 1.0f, 1.0f);
-        lightObjShader.setFloat("light.position", 0.0f, 0.0f, 1.0f);
         lightObjShader.setVec3("viewPos", camera.getPosition());
         
-        lightObjShader.setFloat("material.ambient",  1.0f, 0.5f, 0.31f);
-        lightObjShader.setFloat("material.diffuse",  1.0f, 0.5f, 0.31f);
         lightObjShader.setFloat("material.specular", 0.5f, 0.5f, 0.5f);
         lightObjShader.setFloat("material.shininess", 32.0f);
         
         lightObjShader.setMatrix4("view", glm::value_ptr(view));
         lightObjShader.setMatrix4("projection", glm::value_ptr(projection));
         
-        glm::mat4 model2;
-        glm::mat4 rotateUniform2;
-        float radius = 0.8f;
-        float earthX = sin(glfwGetTime()) * radius;
-        float earthZ = cos(glfwGetTime()) * radius;
-        model2 = glm::translate(model2, glm::vec3(earthX, 0.0f, earthZ));
-        rotateUniform2 = glm::rotate(rotateUniform2, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        model2 *= rotateUniform2;
-        model2 = glm::scale(model2, glm::vec3(0.1f, 0.1f, 0.1f));
-        lightObjShader.setMatrix4("model", glm::value_ptr(model2));
-        lightObjShader.setMatrix4("rotation", glm::value_ptr(rotateUniform2));
+        vector<glm::vec3> offsetVec;
+        for (int i = 0; i < pArray.size(); i++)
+        {
+            createPlanets(&lightObjShader, i, offsetVec);
+            glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        }
         
-        glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        // moon
+        glBindTexture(GL_TEXTURE_2D, texture3);
         
-//        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, texture3);
-        glm::mat4 model3;
-        glm::mat4 rotateUniform3;
-        float radius2 = 0.25f;
-        float earthX2 = sin(glfwGetTime()*4) * radius2;
-        float earthZ2 = cos(glfwGetTime()*4) * radius2;
-        model3 = glm::translate(model3, glm::vec3(earthX2, 0.0f, earthZ2) + glm::vec3(earthX, 0.0f, earthZ));
-        rotateUniform3 = glm::rotate(rotateUniform3, (float)glfwGetTime() * glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        model3 *= rotateUniform3;
-        model3 = glm::scale(model3, glm::vec3(0.04f, 0.04f, 0.04f));
-        lightObjShader.setMatrix4("model", glm::value_ptr(model3));
-        lightObjShader.setMatrix4("rotation", glm::value_ptr(rotateUniform3));
-
-        glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        for (int i = 0; i < mArray.size(); i++)
+        {
+            createMoons(&lightObjShader, i, offsetVec[mArray[i].fatherId - 1]);
+            glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        }
+        
+        // skybox
+        // change depth function so depth test passes when values are equal to depth buffer's content
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+        glBindVertexArray(skyboxVAO);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        // remove the translation section of transformation matrices by taking the upper-left 3x3 matrix of the 4x4 matrix
+        glm::mat4 skyView = glm::mat4(glm::mat3(camera.getViewMatrix()));
+        skyboxShader.setMatrix4("view", glm::value_ptr(skyView));
+        skyboxShader.setMatrix4("projection", glm::value_ptr(projection));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // set depth function back to default
+        glDepthFunc(GL_LESS);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
@@ -382,5 +537,6 @@ int main()
     glfwTerminate();
     
     delete []vertices;
+    
     return 0;
 }

@@ -47,10 +47,9 @@
 		4F97F13420EF4111009CCED2 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../../../../Downloads/glad/src/glad.c; sourceTree = "<group>"; };
 		4FACCECE20EB3DBE00E557F0 /* helpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = helpers.cpp; sourceTree = "<group>"; };
 		4FACCECF20EB3DBE00E557F0 /* helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = helpers.hpp; sourceTree = "<group>"; };
-		4FACCED220EB3F2A00E557F0 /* triangle.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.vs; sourceTree = "<group>"; };
-		4FACCED320EB43EF00E557F0 /* triangle.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = triangle.fs; sourceTree = "<group>"; };
-		4FB079E820F2E67100EE3F1B /* wood.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = wood.jpg; sourceTree = "<group>"; };
-		4FB079E920F32E4E00EE3F1B /* leaf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leaf.png; sourceTree = "<group>"; };
+		4FAE1F24210A681300912BA8 /* skybox.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = skybox.vs; sourceTree = "<group>"; };
+		4FAE1F25210A682D00912BA8 /* skybox.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = skybox.fs; sourceTree = "<group>"; };
+		4FAE1F26210A82AC00912BA8 /* planetConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = planetConfig.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +117,7 @@
 				4FACCECD20EB3D8000E557F0 /* helpers */,
 				4F130BC520E6F0B400A38FBA /* gladScr */,
 				4F8998A520E6C24100F8493B /* main.cpp */,
+				4FAE1F26210A82AC00912BA8 /* planetConfig.h */,
 			);
 			path = TimeAndSpace;
 			sourceTree = "<group>";
@@ -134,14 +134,14 @@
 		4FACCED120EB3F1600E557F0 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
-				4FACCED220EB3F2A00E557F0 /* triangle.vs */,
-				4FACCED320EB43EF00E557F0 /* triangle.fs */,
 				4F97EE1520EF0C14009CCED2 /* shader.cpp */,
 				4F97EE1620EF0C14009CCED2 /* shader.hpp */,
 				4F4BF3E220FD56E900876BB2 /* light.vs */,
 				4F4BF3E320FD56FD00876BB2 /* light.fs */,
 				4F4BF3E420FD576F00876BB2 /* source.vs */,
 				4F4BF3E520FD578200876BB2 /* source.fs */,
+				4FAE1F24210A681300912BA8 /* skybox.vs */,
+				4FAE1F25210A682D00912BA8 /* skybox.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -152,8 +152,6 @@
 				4F015CC320F93AAA003AF339 /* earth.jpg */,
 				4F015CC120F93AAA003AF339 /* moon.jpg */,
 				4F015CC220F93AAA003AF339 /* sun.jpg */,
-				4FB079E920F32E4E00EE3F1B /* leaf.png */,
-				4FB079E820F2E67100EE3F1B /* wood.jpg */,
 			);
 			path = imgs;
 			sourceTree = "<group>";
