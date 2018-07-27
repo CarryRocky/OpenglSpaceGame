@@ -10,7 +10,7 @@ uniform mat4 rotation;
 
 out vec3 Normal;
 out vec3 FragPos;
-out vec2 texCoord;
+out vec3 texCoord;
 
 void main()
 {
@@ -18,5 +18,5 @@ void main()
     Normal = vec3(rotation * vec4(aPos, 1.0));
     FragPos = vec3(model * vec4(aPos, 1.0));
     
-    texCoord = aTexCoord;
+    texCoord = aPos;
 }

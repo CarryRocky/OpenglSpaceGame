@@ -221,6 +221,38 @@ unsigned int loadCubemap(vector<string> faces)
     return textureID;
 }
 
+unsigned int loadCubemap(string imgName)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    
+    int width, height, nrChannels;
+    for (unsigned int i = 0; i < 6; i++)
+    {
+        unsigned char *data = stbi_load(imgName.c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+                         );
+            stbi_image_free(data);
+        }
+        else
+        {
+            cout << "Cubemap texture failed to load at path: " << imgName << endl;
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    
+    return textureID;
+}
+
 void createStars(Shader *curShader, int sid)
 {
     Star curStar = sArray[sid];
@@ -419,11 +451,27 @@ int main()
     
     // texture
     unsigned int texture1, texture2, texture3;
-    // load and generate the texture
-    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
-    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
-    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
+//    // load and generate the texture
+//    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
+//    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
+//    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
 
+    vector<unsigned int> sunTexture;
+    for (int i = 0; i < sArray.size(); i++)
+    {
+        sunTexture.push_back(loadCubemap(sArray[i].img));
+    }
+    vector<unsigned int> planetTexture;
+    for (int i = 0; i < pArray.size(); i++)
+    {
+        planetTexture.push_back(loadCubemap(pArray[i].img));
+    }
+    vector<unsigned int> moonTexture;
+    for (int i = 0; i < mArray.size(); i++)
+    {
+        moonTexture.push_back(loadCubemap(mArray[i].img));
+    }
+    
     Shader lightObjShader("shaders/light.vs", "shaders/light.fs");
 
     // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
@@ -458,7 +506,6 @@ int main()
         // sun
         lightSourceShader.use();
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
         glBindVertexArray(lightVAO);
 
         glm::mat4 view;
@@ -468,6 +515,7 @@ int main()
         
         for (int i = 0; i < sArray.size(); i++)
         {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, sunTexture[i]);
             createStars(&lightSourceShader, i);
 //        // the last argument specifies an offset in the EBO
 //        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
@@ -476,7 +524,7 @@ int main()
         
         // earth
         lightObjShader.use();
-        glBindTexture(GL_TEXTURE_2D, texture2);
+//        glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         
         lightObjShader.setFloat("light.constant", 1.0f);
@@ -501,15 +549,17 @@ int main()
         vector<glm::vec3> offsetVec;
         for (int i = 0; i < pArray.size(); i++)
         {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, planetTexture[i]);
             createPlanets(&lightObjShader, i, offsetVec);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
         
         // moon
-        glBindTexture(GL_TEXTURE_2D, texture3);
+//        glBindTexture(GL_TEXTURE_2D, texture3);
         
         for (int i = 0; i < mArray.size(); i++)
         {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, moonTexture[i]);
             createMoons(&lightObjShader, i, offsetVec[mArray[i].fatherId - 1]);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }

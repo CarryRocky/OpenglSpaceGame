@@ -2,9 +2,9 @@
 out vec4 FragColor;
 
 struct Material {
-    sampler2D diffuse;
-    vec3      specular;
-    float     shininess;
+    samplerCube diffuse;
+    vec3        specular;
+    float       shininess;
 }; 
 
 uniform Material material;
@@ -26,7 +26,7 @@ uniform vec3 viewPos;
 
 in vec3 Normal;
 in vec3 FragPos;
-in vec2 texCoord;
+in vec3 texCoord;
 
 void main()
 {

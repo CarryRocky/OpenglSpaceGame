@@ -1,10 +1,10 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec2 texCoord;
+in vec3 texCoord;
 in vec3 outPos;
 
-uniform sampler2D texture1;
+uniform samplerCube texture1;
 
 void main()
 {
