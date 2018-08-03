@@ -450,7 +450,7 @@ int main()
     unsigned int cubemapTexture = loadCubemap(faces);
     
     // texture
-    unsigned int texture1, texture2, texture3;
+//    unsigned int texture1, texture2, texture3;
 //    // load and generate the texture
 //    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
 //    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
@@ -473,7 +473,6 @@ int main()
     }
     
     Shader lightObjShader("shaders/light.vs", "shaders/light.fs");
-
     // finding the uniform location does not need to use the shader program first, but updating a uniform does need to first use the program
     lightObjShader.use();
     lightObjShader.setInt("material.diffuse", 0);
@@ -517,8 +516,6 @@ int main()
         {
             glBindTexture(GL_TEXTURE_CUBE_MAP, sunTexture[i]);
             createStars(&lightSourceShader, i);
-//        // the last argument specifies an offset in the EBO
-//        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
         

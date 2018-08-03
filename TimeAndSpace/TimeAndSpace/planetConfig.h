@@ -80,21 +80,21 @@ struct Moon
 };
 
 const vector<Star> sArray{
-    Star(glm::vec3(0.0f, 0.0f, 15.0f), 1, "imgs/star_1.jpg"),
+    Star(glm::vec3(0.0f, 0.0f, 18.0f), 1, "imgs/star_1.jpg"),
     Star(glm::vec3(15.0f, 0.0f, -15.0f), 2, "imgs/star_2.jpg"),
     Star(glm::vec3(-30.0f, 0.0f, -30.0f), 3, "imgs/star_3.jpg"),
 };
 
 const vector<Planet> pArray{
-    Planet(1.2f, 1, 1, "imgs/planet_1.jpg", 0.2f, 0.6),
-    Planet(2.5f, 2, 1, "imgs/planet_2.jpg", 0.2f, 0.4),
-    Planet(5.8f, 3, 1, "imgs/planet_3.jpg", 0.2f, 0.2),
+    Planet(2.4f, 1, 1, "imgs/planet_1.jpg", 0.2f, 0.6),
+    Planet(5.0f, 2, 1, "imgs/planet_2.jpg", 0.2f, 0.4),
+    Planet(11.6f, 3, 1, "imgs/planet_3.jpg", 0.2f, 0.2),
     Planet(3.8f, 4, 2, "imgs/planet_4.jpg", 0.2f, 0.1f),
     Planet(8.8f, 5, 2, "imgs/planet_5.jpg", 0.2f, 0.5f),
-    Planet(1.8f, 6, 3, "imgs/planet_6.jpg", 0.2f, 0.4f),
-    Planet(3.7f, 7, 3, "imgs/planet_7.jpg", 0.2f, 0.3f),
-    Planet(5.8f, 8, 3, "imgs/planet_8.jpg", 0.2f, 0.2f),
-    Planet(9.8f, 9, 3, "imgs/planet_9.jpg", 0.2f, 0.06f),
+    Planet(2.0f, 6, 3, "imgs/planet_6.jpg", 0.2f, 0.4f),
+    Planet(7.4f, 7, 3, "imgs/planet_7.jpg", 0.2f, 0.3f),
+    Planet(11.0f, 8, 3, "imgs/planet_8.jpg", 0.2f, 0.2f),
+    Planet(20.1f, 9, 3, "imgs/planet_9.jpg", 0.2f, 0.06f),
 };
 
 const vector<Moon> mArray{

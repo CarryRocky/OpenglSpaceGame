@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4F130BB720E6EA8200A38FBA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB620E6EA8200A38FBA /* OpenGL.framework */; };
 		4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */; };
+		4F7004742113E14A00B754C3 /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7004722113E14A00B754C3 /* mesh.cpp */; };
 		4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7704BD20F72DAC00C11997 /* camera.cpp */; };
 		4F8998A620E6C24100F8493B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8998A520E6C24100F8493B /* main.cpp */; };
 		4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F97EE1520EF0C14009CCED2 /* shader.cpp */; };
@@ -29,15 +30,36 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4F015CC120F93AAA003AF339 /* moon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon.jpg; sourceTree = "<group>"; };
-		4F015CC220F93AAA003AF339 /* sun.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sun.jpg; sourceTree = "<group>"; };
-		4F015CC320F93AAA003AF339 /* earth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = earth.jpg; sourceTree = "<group>"; };
 		4F130BB620E6EA8200A38FBA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
 		4F4BF3E220FD56E900876BB2 /* light.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.vs; sourceTree = "<group>"; };
 		4F4BF3E320FD56FD00876BB2 /* light.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.fs; sourceTree = "<group>"; };
 		4F4BF3E420FD576F00876BB2 /* source.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.vs; sourceTree = "<group>"; };
 		4F4BF3E520FD578200876BB2 /* source.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.fs; sourceTree = "<group>"; };
+		4F70045A2113DECF00B754C3 /* bottom.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = bottom.tga; sourceTree = "<group>"; };
+		4F70045B2113DECF00B754C3 /* moon_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_1.jpg; sourceTree = "<group>"; };
+		4F70045C2113DECF00B754C3 /* moon_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_3.jpg; sourceTree = "<group>"; };
+		4F70045D2113DECF00B754C3 /* planet_4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_4.jpg; sourceTree = "<group>"; };
+		4F70045E2113DECF00B754C3 /* front.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = front.tga; sourceTree = "<group>"; };
+		4F70045F2113DECF00B754C3 /* planet_9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_9.jpg; sourceTree = "<group>"; };
+		4F7004602113DECF00B754C3 /* left.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = left.tga; sourceTree = "<group>"; };
+		4F7004612113DECF00B754C3 /* star_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = star_1.jpg; sourceTree = "<group>"; };
+		4F7004622113DECF00B754C3 /* planet_6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_6.jpg; sourceTree = "<group>"; };
+		4F7004632113DECF00B754C3 /* planet_8.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_8.jpg; sourceTree = "<group>"; };
+		4F7004642113DECF00B754C3 /* top.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = top.tga; sourceTree = "<group>"; };
+		4F7004652113DECF00B754C3 /* moon_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_2.jpg; sourceTree = "<group>"; };
+		4F7004662113DECF00B754C3 /* planet_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_2.jpg; sourceTree = "<group>"; };
+		4F7004672113DECF00B754C3 /* planet_7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_7.jpg; sourceTree = "<group>"; };
+		4F7004682113DED000B754C3 /* planet_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_3.jpg; sourceTree = "<group>"; };
+		4F7004692113DED000B754C3 /* star_2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = star_2.jpg; sourceTree = "<group>"; };
+		4F70046A2113DED000B754C3 /* star_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = star_3.jpg; sourceTree = "<group>"; };
+		4F70046B2113DED000B754C3 /* back.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = back.tga; sourceTree = "<group>"; };
+		4F70046C2113DED000B754C3 /* planet_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_1.jpg; sourceTree = "<group>"; };
+		4F70046D2113DED000B754C3 /* planet_5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = planet_5.jpg; sourceTree = "<group>"; };
+		4F70046E2113DED000B754C3 /* right.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = right.tga; sourceTree = "<group>"; };
+		4F70046F2113DED000B754C3 /* moon_4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_4.jpg; sourceTree = "<group>"; };
+		4F7004722113E14A00B754C3 /* mesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
+		4F7004732113E14A00B754C3 /* mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = mesh.hpp; sourceTree = "<group>"; };
 		4F7704BD20F72DAC00C11997 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		4F7704BE20F72DAC00C11997 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,6 +104,15 @@
 			path = gladScr;
 			sourceTree = "<group>";
 		};
+		4F7004702113DF6B00B754C3 /* models */ = {
+			isa = PBXGroup;
+			children = (
+				4F7004722113E14A00B754C3 /* mesh.cpp */,
+				4F7004732113E14A00B754C3 /* mesh.hpp */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
 		4F7704BC20F72D9600C11997 /* camera */ = {
 			isa = PBXGroup;
 			children = (
@@ -111,8 +142,9 @@
 		4F8998A420E6C24100F8493B /* TimeAndSpace */ = {
 			isa = PBXGroup;
 			children = (
-				4F7704BC20F72D9600C11997 /* camera */,
+				4F7004702113DF6B00B754C3 /* models */,
 				4FB079E420F2D28000EE3F1B /* imgs */,
+				4F7704BC20F72D9600C11997 /* camera */,
 				4FACCED120EB3F1600E557F0 /* shaders */,
 				4FACCECD20EB3D8000E557F0 /* helpers */,
 				4F130BC520E6F0B400A38FBA /* gladScr */,
@@ -149,9 +181,28 @@
 		4FB079E420F2D28000EE3F1B /* imgs */ = {
 			isa = PBXGroup;
 			children = (
-				4F015CC320F93AAA003AF339 /* earth.jpg */,
-				4F015CC120F93AAA003AF339 /* moon.jpg */,
-				4F015CC220F93AAA003AF339 /* sun.jpg */,
+				4F70046B2113DED000B754C3 /* back.tga */,
+				4F70045A2113DECF00B754C3 /* bottom.tga */,
+				4F70045E2113DECF00B754C3 /* front.tga */,
+				4F7004602113DECF00B754C3 /* left.tga */,
+				4F70045B2113DECF00B754C3 /* moon_1.jpg */,
+				4F7004652113DECF00B754C3 /* moon_2.jpg */,
+				4F70045C2113DECF00B754C3 /* moon_3.jpg */,
+				4F70046F2113DED000B754C3 /* moon_4.jpg */,
+				4F70046C2113DED000B754C3 /* planet_1.jpg */,
+				4F7004662113DECF00B754C3 /* planet_2.jpg */,
+				4F7004682113DED000B754C3 /* planet_3.jpg */,
+				4F70045D2113DECF00B754C3 /* planet_4.jpg */,
+				4F70046D2113DED000B754C3 /* planet_5.jpg */,
+				4F7004622113DECF00B754C3 /* planet_6.jpg */,
+				4F7004672113DECF00B754C3 /* planet_7.jpg */,
+				4F7004632113DECF00B754C3 /* planet_8.jpg */,
+				4F70045F2113DECF00B754C3 /* planet_9.jpg */,
+				4F70046E2113DED000B754C3 /* right.tga */,
+				4F7004612113DECF00B754C3 /* star_1.jpg */,
+				4F7004692113DED000B754C3 /* star_2.jpg */,
+				4F70046A2113DED000B754C3 /* star_3.jpg */,
+				4F7004642113DECF00B754C3 /* top.tga */,
 			);
 			path = imgs;
 			sourceTree = "<group>";
@@ -214,6 +265,7 @@
 			files = (
 				4FACCED020EB3DBE00E557F0 /* helpers.cpp in Sources */,
 				4F8998A620E6C24100F8493B /* main.cpp in Sources */,
+				4F7004742113E14A00B754C3 /* mesh.cpp in Sources */,
 				4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */,
 				4F97F13520EF4111009CCED2 /* glad.c in Sources */,
 				4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */,
