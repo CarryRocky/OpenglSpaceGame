@@ -24,6 +24,7 @@ using namespace std;
 #include "shader.hpp"
 #include "camera.hpp"
 #include "model.hpp"
+#include "comet.hpp"
 // by defining STB_IMAGE_IMPLEMENTATION the preprocessor modifies the header file such that it only contains the relevant definition source code, effectively turning the header file into a .cpp file
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -98,35 +99,35 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void loadTextureFile(unsigned int &texture, const char *fileName, GLenum imgType, bool needFlip)
-{
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    stbi_set_flip_vertically_on_load(needFlip);
-    
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(fileName, &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        // the second argument specifies the mipmap level
-        // the third argument tells OpenGL the format of the texture to store
-        // the sixth argument should always be zero (some legacy stuff)
-        // the seventh and eighth argument specify the format and datatype of the source image
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, imgType, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        cout << "Failed to load texture: " << fileName << endl;
-    }
-    stbi_image_free(data);
-}
+//void loadTextureFile(unsigned int &texture, const char *fileName, GLenum imgType, bool needFlip)
+//{
+//    glGenTextures(1, &texture);
+//    glBindTexture(GL_TEXTURE_2D, texture);
+//
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//    stbi_set_flip_vertically_on_load(needFlip);
+//
+//    int width, height, nrChannels;
+//    unsigned char *data = stbi_load(fileName, &width, &height, &nrChannels, 0);
+//    if (data)
+//    {
+//        // the second argument specifies the mipmap level
+//        // the third argument tells OpenGL the format of the texture to store
+//        // the sixth argument should always be zero (some legacy stuff)
+//        // the seventh and eighth argument specify the format and datatype of the source image
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, imgType, GL_UNSIGNED_BYTE, data);
+//        glGenerateMipmap(GL_TEXTURE_2D);
+//    }
+//    else
+//    {
+//        cout << "Failed to load texture: " << fileName << endl;
+//    }
+//    stbi_image_free(data);
+//}
 
 void sphereVecPushBack(vector<float> &newVec, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 {
@@ -210,38 +211,6 @@ unsigned int loadCubemap(vector<string> faces)
         else
         {
             cout << "Cubemap texture failed to load at path: " << faces[i] << endl;
-            stbi_image_free(data);
-        }
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    
-    return textureID;
-}
-
-unsigned int loadCubemap(string imgName)
-{
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-    
-    int width, height, nrChannels;
-    for (unsigned int i = 0; i < 6; i++)
-    {
-        unsigned char *data = stbi_load(imgName.c_str(), &width, &height, &nrChannels, 0);
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-                         );
-            stbi_image_free(data);
-        }
-        else
-        {
-            cout << "Cubemap texture failed to load at path: " << imgName << endl;
             stbi_image_free(data);
         }
     }
@@ -449,28 +418,43 @@ int main()
         "imgs/back.tga"
     };
     unsigned int cubemapTexture = loadCubemap(faces);
-    
-    // texture
+
 //    unsigned int texture1, texture2, texture3;
 //    // load and generate the texture
 //    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
 //    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
 //    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
 
+    // texture
     vector<unsigned int> sunTexture;
     for (int i = 0; i < sArray.size(); i++)
     {
-        sunTexture.push_back(loadCubemap(sArray[i].img));
+        vector<string> texStr;
+        for (int j = 0; j < 6; j++)
+        {
+            texStr.push_back(sArray[i].img);
+        }
+        sunTexture.push_back(loadCubemap(texStr));
     }
     vector<unsigned int> planetTexture;
     for (int i = 0; i < pArray.size(); i++)
     {
-        planetTexture.push_back(loadCubemap(pArray[i].img));
+        vector<string> texStr;
+        for (int j = 0; j < 6; j++)
+        {
+            texStr.push_back(pArray[i].img);
+        }
+        planetTexture.push_back(loadCubemap(texStr));
     }
     vector<unsigned int> moonTexture;
     for (int i = 0; i < mArray.size(); i++)
     {
-        moonTexture.push_back(loadCubemap(mArray[i].img));
+        vector<string> texStr;
+        for (int j = 0; j < 6; j++)
+        {
+            texStr.push_back(mArray[i].img);
+        }
+        moonTexture.push_back(loadCubemap(texStr));
     }
     
     Shader lightObjShader("shaders/light.vs", "shaders/light.fs");
@@ -491,15 +475,7 @@ int main()
     
     Shader modelShader("shaders/comet.vs", "shaders/comet.fs");
     
-    glm::vec3 initComet = camera.getWorldCoByCameraCo(10, 10, 20);
-    int randomAngle = rand() % 70 + 10;
-    glm::vec3 comtDirection = camera.getDirctionByCameraCo(-cos(glm::radians(float(randomAngle))), -sin(glm::radians(float(randomAngle))), 0);
-    float cometTime = 0.0f;
-    glm::vec3 yawAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 1.0f, 0.0f));
-    glm::vec3 pitchAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 0.0f, -1.0f));
-    float cometRotateAngle = -90.0f - camera.getYaw() - 90.0f;
-    float rightAngle = camera.getPitch();
-    glm::vec3 rightAxial = glm::normalize(camera.getDirctionByCameraCo(1.0f, 0.0f, 0.0f));
+    Comet *curComet = new Comet(&camera);
     
     bool isFirstLoop = true;
     
@@ -541,37 +517,18 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
         
-        if (cometTime >= 10.0f)
+        if (curComet->getLifeTime() >= 10.0f)
         {
-            cometTime = 0.0f;
-            initComet = camera.getWorldCoByCameraCo(10, 10, 20);
-            randomAngle = rand() % 70 + 10;
-            comtDirection = camera.getDirctionByCameraCo(-cos(glm::radians(float(randomAngle))), -sin(glm::radians(float(randomAngle))), 0);
-            yawAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 1.0f, 0.0f));
-            pitchAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 0.0f, -1.0f));
-            cometRotateAngle = -90.0f - camera.getYaw() - 90.0f;
-            rightAngle = camera.getPitch();
-            rightAxial = glm::normalize(camera.getDirctionByCameraCo(1.0f, 0.0f, 0.0f));
+            delete curComet;
+            curComet = new Comet(&camera);
         }
-        
-        cometTime += deltaTime;
         
         // comet
         modelShader.use();
         modelShader.setMatrix4("view", glm::value_ptr(view));
         modelShader.setMatrix4("projection", glm::value_ptr(projection));
-        glm::mat4 cometModel;
-        glm::mat4 cometNormal;
-        initComet += 0.2f*comtDirection;
-        cometModel = glm::translate(cometModel, initComet);
-        cometNormal = glm::rotate(cometNormal, glm::radians(float(randomAngle)), pitchAxial);
-        cometNormal = glm::rotate(cometNormal, glm::radians(cometRotateAngle), yawAxial);
-        cometNormal = glm::rotate(cometNormal, glm::radians(rightAngle), rightAxial);
-        cometModel *= cometNormal;
-        cometModel = glm::scale(cometModel, glm::vec3(0.01f, 0.01f, 0.01f));
-        modelShader.setMatrix4("model", glm::value_ptr(cometModel));
+        curComet->update(&modelShader, deltaTime);
         modelShader.setVec3("lightPos", camera.getPosition());
-        modelShader.setMatrix4("rotation", glm::value_ptr(cometNormal));
         ourModel.Draw(modelShader);
         
         // earth
