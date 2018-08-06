@@ -517,7 +517,7 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
         
-        if (curComet->getLifeTime() >= 10.0f)
+        if (curComet->getLifeTime() >= 20.0f)
         {
             delete curComet;
             curComet = new Comet(&camera);
