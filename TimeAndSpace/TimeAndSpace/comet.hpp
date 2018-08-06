@@ -25,11 +25,6 @@ public:
     Comet(Camera*);
     void update(Shader*, float);
     
-    glm::vec3 getPos()
-    {
-        return position;
-    }
-    
     float getLifeTime()
     {
         return lifetime;
