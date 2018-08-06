@@ -30,6 +30,8 @@ struct Vertex {
 struct Texture {
     unsigned int t_id;
     string t_type;
+    // store the path of the texture to compare with other textures
+    string path;
 };
 
 class Mesh {

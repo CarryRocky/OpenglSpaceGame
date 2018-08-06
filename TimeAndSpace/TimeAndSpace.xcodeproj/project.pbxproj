@@ -10,6 +10,8 @@
 		4F130BB720E6EA8200A38FBA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB620E6EA8200A38FBA /* OpenGL.framework */; };
 		4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */; };
 		4F7004742113E14A00B754C3 /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7004722113E14A00B754C3 /* mesh.cpp */; };
+		4F7004772113F4EC00B754C3 /* model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7004752113F4EC00B754C3 /* model.cpp */; };
+		4F70047B2114068400B754C3 /* libassimp.4.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */; };
 		4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7704BD20F72DAC00C11997 /* camera.cpp */; };
 		4F8998A620E6C24100F8493B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8998A520E6C24100F8493B /* main.cpp */; };
 		4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F97EE1520EF0C14009CCED2 /* shader.cpp */; };
@@ -60,6 +62,11 @@
 		4F70046F2113DED000B754C3 /* moon_4.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_4.jpg; sourceTree = "<group>"; };
 		4F7004722113E14A00B754C3 /* mesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
 		4F7004732113E14A00B754C3 /* mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = mesh.hpp; sourceTree = "<group>"; };
+		4F7004752113F4EC00B754C3 /* model.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = model.cpp; sourceTree = "<group>"; };
+		4F7004762113F4EC00B754C3 /* model.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = model.hpp; sourceTree = "<group>"; };
+		4F7004782114046600B754C3 /* comet.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = comet.vs; sourceTree = "<group>"; };
+		4F7004792114047500B754C3 /* comet.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = comet.fs; sourceTree = "<group>"; };
+		4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.4.1.0.dylib; path = ../../../../../../usr/local/Cellar/assimp/4.1.0/lib/libassimp.4.1.0.dylib; sourceTree = "<group>"; };
 		4F7704BD20F72DAC00C11997 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		4F7704BE20F72DAC00C11997 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F70047B2114068400B754C3 /* libassimp.4.1.0.dylib in Frameworks */,
 				4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */,
 				4F130BB720E6EA8200A38FBA /* OpenGL.framework in Frameworks */,
 			);
@@ -90,6 +98,7 @@
 		4F130BB520E6EA8200A38FBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */,
 				4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */,
 				4F130BB620E6EA8200A38FBA /* OpenGL.framework */,
 			);
@@ -109,6 +118,8 @@
 			children = (
 				4F7004722113E14A00B754C3 /* mesh.cpp */,
 				4F7004732113E14A00B754C3 /* mesh.hpp */,
+				4F7004752113F4EC00B754C3 /* model.cpp */,
+				4F7004762113F4EC00B754C3 /* model.hpp */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -174,6 +185,8 @@
 				4F4BF3E520FD578200876BB2 /* source.fs */,
 				4FAE1F24210A681300912BA8 /* skybox.vs */,
 				4FAE1F25210A682D00912BA8 /* skybox.fs */,
+				4F7004782114046600B754C3 /* comet.vs */,
+				4F7004792114047500B754C3 /* comet.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -264,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FACCED020EB3DBE00E557F0 /* helpers.cpp in Sources */,
+				4F7004772113F4EC00B754C3 /* model.cpp in Sources */,
 				4F8998A620E6C24100F8493B /* main.cpp in Sources */,
 				4F7004742113E14A00B754C3 /* mesh.cpp in Sources */,
 				4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */,
@@ -392,6 +406,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.2.1/lib,
+					/usr/local/Cellar/assimp/4.1.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_HEADER_SEARCH_PATHS = "";
@@ -406,6 +421,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.2.1/lib,
+					/usr/local/Cellar/assimp/4.1.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_HEADER_SEARCH_PATHS = "";

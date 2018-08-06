@@ -76,11 +76,30 @@ public:
         return Zoom;
     }
     
+    float getYaw()
+    {
+        return Yaw;
+    }
+    
+    float getPitch()
+    {
+        return Pitch;
+    }
+    
     glm::vec3 getPosition()
     {
         return Position;
     }
     
+    glm::vec3 getWorldCoByCameraCo(float r, float u, float f)
+    {
+        return Position + r * Right + u * Up + f * Front;
+    }
+    
+    glm::vec3 getDirctionByCameraCo(float r, float u, float f)
+    {
+        return r * Right + u * Up + f * Front;
+    }
 private:
     void updateCameraVectors();
     

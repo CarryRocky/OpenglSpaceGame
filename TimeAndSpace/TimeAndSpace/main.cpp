@@ -23,6 +23,7 @@ using namespace std;
 
 #include "shader.hpp"
 #include "camera.hpp"
+#include "model.hpp"
 // by defining STB_IMAGE_IMPLEMENTATION the preprocessor modifies the header file such that it only contains the relevant definition source code, effectively turning the header file into a .cpp file
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -486,9 +487,30 @@ int main()
     // hide the cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
+    Model ourModel("/Users/carry/Downloads/Smoke_Track.obj");
+    
+    Shader modelShader("shaders/comet.vs", "shaders/comet.fs");
+    
+    glm::vec3 initComet = camera.getWorldCoByCameraCo(10, 10, 20);
+    int randomAngle = rand() % 70 + 10;
+    glm::vec3 comtDirection = camera.getDirctionByCameraCo(-cos(glm::radians(float(randomAngle))), -sin(glm::radians(float(randomAngle))), 0);
+    float cometTime = 0.0f;
+    glm::vec3 yawAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 1.0f, 0.0f));
+    glm::vec3 pitchAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 0.0f, -1.0f));
+    float cometRotateAngle = -90.0f - camera.getYaw() - 90.0f;
+    float rightAngle = camera.getPitch();
+    glm::vec3 rightAxial = glm::normalize(camera.getDirctionByCameraCo(1.0f, 0.0f, 0.0f));
+    
+    bool isFirstLoop = true;
+    
     while(!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
+        if (isFirstLoop)
+        {
+            lastFrame = currentFrame;
+            isFirstLoop = false;
+        }
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
@@ -518,6 +540,39 @@ int main()
             createStars(&lightSourceShader, i);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
+        
+        if (cometTime >= 10.0f)
+        {
+            cometTime = 0.0f;
+            initComet = camera.getWorldCoByCameraCo(10, 10, 20);
+            randomAngle = rand() % 70 + 10;
+            comtDirection = camera.getDirctionByCameraCo(-cos(glm::radians(float(randomAngle))), -sin(glm::radians(float(randomAngle))), 0);
+            yawAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 1.0f, 0.0f));
+            pitchAxial = glm::normalize(camera.getDirctionByCameraCo(0.0f, 0.0f, -1.0f));
+            cometRotateAngle = -90.0f - camera.getYaw() - 90.0f;
+            rightAngle = camera.getPitch();
+            rightAxial = glm::normalize(camera.getDirctionByCameraCo(1.0f, 0.0f, 0.0f));
+        }
+        
+        cometTime += deltaTime;
+        
+        // comet
+        modelShader.use();
+        modelShader.setMatrix4("view", glm::value_ptr(view));
+        modelShader.setMatrix4("projection", glm::value_ptr(projection));
+        glm::mat4 cometModel;
+        glm::mat4 cometNormal;
+        initComet += 0.2f*comtDirection;
+        cometModel = glm::translate(cometModel, initComet);
+        cometNormal = glm::rotate(cometNormal, glm::radians(float(randomAngle)), pitchAxial);
+        cometNormal = glm::rotate(cometNormal, glm::radians(cometRotateAngle), yawAxial);
+        cometNormal = glm::rotate(cometNormal, glm::radians(rightAngle), rightAxial);
+        cometModel *= cometNormal;
+        cometModel = glm::scale(cometModel, glm::vec3(0.01f, 0.01f, 0.01f));
+        modelShader.setMatrix4("model", glm::value_ptr(cometModel));
+        modelShader.setVec3("lightPos", camera.getPosition());
+        modelShader.setMatrix4("rotation", glm::value_ptr(cometNormal));
+        ourModel.Draw(modelShader);
         
         // earth
         lightObjShader.use();
