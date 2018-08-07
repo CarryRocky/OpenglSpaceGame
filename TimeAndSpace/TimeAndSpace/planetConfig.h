@@ -89,8 +89,10 @@ const vector<Planet> pArray{
     Planet(2.4f, 1, 1, "imgs/planet_1.jpg", 0.2f, 0.6),
     Planet(5.0f, 2, 1, "imgs/planet_2.jpg", 0.2f, 0.4),
     Planet(11.6f, 3, 1, "imgs/planet_3.jpg", 0.2f, 0.2),
+    
     Planet(3.8f, 4, 2, "imgs/planet_4.jpg", 0.2f, 0.1f),
     Planet(8.8f, 5, 2, "imgs/planet_5.jpg", 0.2f, 0.5f),
+    
     Planet(2.0f, 6, 3, "imgs/planet_6.jpg", 0.2f, 0.4f),
     Planet(7.4f, 7, 3, "imgs/planet_7.jpg", 0.2f, 0.3f),
     Planet(11.0f, 8, 3, "imgs/planet_8.jpg", 0.2f, 0.2f),

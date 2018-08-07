@@ -31,13 +31,18 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
     
     if (constrainPitch)
     {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
+        adjustPitch();
     }
     
     updateCameraVectors();
+}
+
+void Camera::adjustPitch()
+{
+    if (Pitch > 89.0f)
+        Pitch = 89.0f;
+    if (Pitch < -89.0f)
+        Pitch = -89.0f;
 }
 
 void Camera::processMouseScroll(float yoffset)
@@ -59,4 +64,20 @@ void Camera::updateCameraVectors()
     Front = glm::normalize(front);
     Right = glm::normalize(glm::cross(Front, WorldUp));
     Up = glm::normalize(glm::cross(Right, Front));
+}
+
+void Camera::dizzying(float dt)
+{
+    int shakeInt = -1;
+    if (shakeRight)
+        shakeInt = 1;
+    
+    Yaw += float(shakeInt) * dizzyVelocity;
+    updateCameraVectors();
+    
+    shakeRight = !shakeRight;
+    
+    Position += dizzyVelocity * dt * dizzyDir;
+    dizzyVelocity += dizzyAcc * dizzyTime;
+    dizzyTime += dt;
 }

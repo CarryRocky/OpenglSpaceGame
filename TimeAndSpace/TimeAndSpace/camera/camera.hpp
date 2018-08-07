@@ -28,6 +28,8 @@ const float SPEED       =  2.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
 
+const float DIZZY_ACC   = -0.1f;
+
 class Camera
 {
 public:
@@ -43,6 +45,10 @@ public:
         Yaw = yaw;
         Pitch = pitch;
         updateCameraVectors();
+        
+        dizzyAcc = DIZZY_ACC;
+        shakeRight = true;
+        resetDizzyParameter();
     }
     
     glm::mat4 getViewMatrix()
@@ -100,6 +106,27 @@ public:
     {
         return r * Right + u * Up + f * Front;
     }
+    
+    void resetDizzyParameter()
+    {
+        dizzyTime = 0.0f;
+        dizzyVelocity = 6.0f;
+        dizzyDir = glm::vec3(0,0,0);
+    }
+    
+    void startDizzy(glm::vec3 dir)
+    {
+        dizzyDir = dir;
+    }
+    
+    void dizzying(float);
+    
+    float getDizzyVelocity()
+    {
+        return dizzyVelocity;
+    }
+    
+    void adjustPitch();
 private:
     void updateCameraVectors();
     
@@ -116,6 +143,12 @@ private:
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
+    
+    float dizzyTime;
+    float dizzyVelocity;
+    glm::vec3 dizzyDir;
+    float dizzyAcc;
+    bool shakeRight;
 };
 
 #endif

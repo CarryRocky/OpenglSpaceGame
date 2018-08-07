@@ -40,11 +40,16 @@ float lastFrame = 0.0f;     // time of last frame
 float lastX = float(WIN_WIDTH/2), lastY = float(WIN_HEIGHT/2);
 bool firstMouse = true;
 
+bool enableControl = true;
+
 // keep all input code organized
 void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    
+    if (!enableControl)
+        return;
     
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.processKeyboard(FORWARD, deltaTime);
@@ -571,6 +576,24 @@ int main()
             glBindTexture(GL_TEXTURE_CUBE_MAP, moonTexture[i]);
             createMoons(&lightObjShader, i, offsetVec[mArray[i].fatherId - 1]);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
+        }
+        
+        glm::vec3 starPos = sArray[0].pos;
+        glm::vec3 camPos = camera.getPosition();
+        if (enableControl && glm::distance(starPos, camPos) <= sArray[0].scale + 0.5)
+        {
+            enableControl = false;
+            camera.startDizzy(glm::normalize(camPos - starPos));
+        }
+        
+        if (!enableControl)
+        {
+            camera.dizzying(deltaTime);
+            if (camera.getDizzyVelocity() <= 0.0f)
+            {
+                camera.resetDizzyParameter();
+                enableControl = true;
+            }
         }
         
         // skybox
