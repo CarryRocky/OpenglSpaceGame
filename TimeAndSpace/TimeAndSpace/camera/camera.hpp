@@ -30,6 +30,8 @@ const float ZOOM        =  45.0f;
 
 const float DIZZY_ACC   = -0.1f;
 
+const float SHAKE_TIME  = 0.1f;
+
 class Camera
 {
 public:
@@ -112,6 +114,8 @@ public:
         dizzyTime = 0.0f;
         dizzyVelocity = 6.0f;
         dizzyDir = glm::vec3(0,0,0);
+        
+        shakeTime = SHAKE_TIME;
     }
     
     void startDizzy(glm::vec3 dir)
@@ -149,6 +153,8 @@ private:
     glm::vec3 dizzyDir;
     float dizzyAcc;
     bool shakeRight;
+    
+    float shakeTime;
 };
 
 #endif

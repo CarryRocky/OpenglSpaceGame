@@ -68,14 +68,17 @@ void Camera::updateCameraVectors()
 
 void Camera::dizzying(float dt)
 {
-    int shakeInt = -1;
-    if (shakeRight)
-        shakeInt = 1;
+    if (shakeTime >= SHAKE_TIME)
+        shakeRight = !shakeRight;
     
-    Yaw += float(shakeInt) * dizzyVelocity;
+    int shakeInt = shakeRight ? 5 : -5;
+    
+    Yaw += float(shakeInt) * dt * dizzyVelocity;
     updateCameraVectors();
     
-    shakeRight = !shakeRight;
+    shakeTime -= dt;
+    if (shakeTime <= 0.0f)
+        shakeTime = SHAKE_TIME;
     
     Position += dizzyVelocity * dt * dizzyDir;
     dizzyVelocity += dizzyAcc * dizzyTime;
