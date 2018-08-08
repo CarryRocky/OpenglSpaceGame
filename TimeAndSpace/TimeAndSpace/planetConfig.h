@@ -106,4 +106,12 @@ const vector<Moon> mArray{
     Moon(1.2f, 4, 8, "imgs/moon_4.jpg"),
 };
 
+struct SolarInfo
+{
+    float range;
+    vector<int> planets;
+    vector<int> moons;
+    bool isCheck;
+};
+
 #endif /* planetConfig_h */

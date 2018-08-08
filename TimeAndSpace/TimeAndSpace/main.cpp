@@ -34,10 +34,15 @@ using namespace std;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
+vector<SolarInfo> solarCollisionVec;
+vector<glm::vec3> starPoses;
+vector<glm::vec3> planetPoses;
+vector<glm::vec3> moonPoses;
+
 float deltaTime = 0.0f;     // time between current frame and last frame
 float lastFrame = 0.0f;     // time of last frame
 
-float lastX = float(WIN_WIDTH/2), lastY = float(WIN_HEIGHT/2);
+float lastX, lastY;
 bool firstMouse = true;
 
 bool enableControl = true;
@@ -239,7 +244,7 @@ void createStars(Shader *curShader, int sid)
     curShader->setMatrix4("model", glm::value_ptr(model));
 }
 
-void createPlanets(Shader *curShader, int pid, vector<glm::vec3> &curOffset)
+void createPlanets(Shader *curShader, int pid)
 {
     Planet curPlanet = pArray[pid];
     glm::vec3 fatherPos = sArray[curPlanet.fatherId - 1].pos;
@@ -251,7 +256,7 @@ void createPlanets(Shader *curShader, int pid, vector<glm::vec3> &curOffset)
     float earthX = sin(glfwGetTime() * curPlanet.rotateSpeed) * radius;
     float earthZ = cos(glfwGetTime() * curPlanet.rotateSpeed) * radius;
     glm::vec3 offsetVec = glm::vec3(earthX, 0.0f, earthZ) + fatherPos;
-    curOffset.push_back(offsetVec);
+    planetPoses[pid] = offsetVec;
     model = glm::translate(model, offsetVec);
     rotateUniform = glm::rotate(rotateUniform, (float)glfwGetTime() * glm::radians(curPlanet.selfSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
     model *= rotateUniform;
@@ -261,7 +266,7 @@ void createPlanets(Shader *curShader, int pid, vector<glm::vec3> &curOffset)
     curShader->setMatrix4("rotation", glm::value_ptr(rotateUniform));
 }
 
-void createMoons(Shader *curShader, int mid, glm::vec3 previousOffset)
+void createMoons(Shader *curShader, int mid)
 {
     Moon curMoon = mArray[mid];
     int sunId = pArray[curMoon.fatherId - 1].fatherId;
@@ -272,7 +277,8 @@ void createMoons(Shader *curShader, int mid, glm::vec3 previousOffset)
     float radius = curMoon.radius;
     float moonX = sin(glfwGetTime() * curMoon.rotateSpeed) * radius;
     float moonZ = cos(glfwGetTime() * curMoon.rotateSpeed) * radius;
-    glm::vec3 offsetVec = glm::vec3(moonX, 0.0f, moonZ) + previousOffset;
+    glm::vec3 offsetVec = glm::vec3(moonX, 0.0f, moonZ) + planetPoses[curMoon.fatherId - 1];
+    moonPoses[mid] = offsetVec;
     model = glm::translate(model, offsetVec);
     rotateUniform = glm::rotate(rotateUniform, (float)glfwGetTime() * glm::radians(curMoon.selfSpeed), glm::vec3(0.0f, 1.0f, 0.0f));
     model *= rotateUniform;
@@ -280,6 +286,87 @@ void createMoons(Shader *curShader, int mid, glm::vec3 previousOffset)
     model = glm::scale(model, glm::vec3(scale, scale, scale));
     curShader->setMatrix4("model", glm::value_ptr(model));
     curShader->setMatrix4("rotation", glm::value_ptr(rotateUniform));
+}
+
+void dealSolarData()
+{
+    for (int i = 0; i < sArray.size(); i++)
+    {
+        SolarInfo tempInfo;
+        tempInfo.range = 0.0f;
+        tempInfo.isCheck = false;
+        solarCollisionVec.push_back(tempInfo);
+        
+        starPoses.push_back(sArray[i].pos);
+    }
+    
+    for (int i = 0; i < pArray.size(); i++)
+    {
+        Planet curPlanet = pArray[i];
+        int fatherId = curPlanet.fatherId;
+        solarCollisionVec[fatherId - 1].planets.push_back(i);
+        if (curPlanet.radius > solarCollisionVec[fatherId - 1].range)
+        {
+            solarCollisionVec[fatherId - 1].range = curPlanet.radius;
+        }
+        
+        planetPoses.push_back(glm::vec3(0, 0, 0));
+    }
+    
+    for (int i = 0; i < mArray.size(); i++)
+    {
+        Moon curMoon = mArray[i];
+        int fatherId = curMoon.fatherId;
+        int fatherStarId = pArray[fatherId - 1].fatherId;
+        solarCollisionVec[fatherStarId - 1].moons.push_back(i);
+        
+        moonPoses.push_back(glm::vec3(0, 0, 0));
+    }
+}
+
+bool checkCollision(glm::vec3 &collisionPos)
+{
+    bool collide = false;
+    
+    glm::vec3 cameraPos = camera.getPosition();
+    for (int i = 0; i < solarCollisionVec.size(); i++)
+    {
+        solarCollisionVec[i].isCheck = (glm::distance(cameraPos, sArray[i].pos) <= solarCollisionVec[i].range + 2.0f);
+        
+        if (solarCollisionVec[i].isCheck)
+        {
+            if (glm::distance(cameraPos, sArray[i].pos) <= sArray[i].scale + 0.5f)
+            {
+                collide = true;
+                collisionPos = sArray[i].pos;
+                break;
+            }
+            
+            vector<int> childPlanets = solarCollisionVec[i].planets;
+            for (int j = 0; j < childPlanets.size(); j++)
+            {
+                if (glm::distance(cameraPos, planetPoses[childPlanets[j]]) <= pArray[childPlanets[j]].scale + 0.5f)
+                {
+                    collide = true;
+                    collisionPos = planetPoses[childPlanets[j]];
+                    break;
+                }
+            }
+            
+            vector<int> childMoons = solarCollisionVec[i].moons;
+            for (int j = 0; j < childMoons.size(); j++)
+            {
+                if (glm::distance(cameraPos, moonPoses[childMoons[j]]) <= mArray[childMoons[j]].scale + 0.5f)
+                {
+                    collide = true;
+                    collisionPos = moonPoses[childMoons[j]];
+                    break;
+                }
+            }
+        }
+    }
+    
+    return collide;
 }
 
 int main()
@@ -311,6 +398,9 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback); 
+    
+    // deal solar data
+    dealSolarData();
     
     float rootSix = sqrt(6);
     float rootThree = sqrt(3);
@@ -560,11 +650,10 @@ int main()
         lightObjShader.setMatrix4("view", glm::value_ptr(view));
         lightObjShader.setMatrix4("projection", glm::value_ptr(projection));
         
-        vector<glm::vec3> offsetVec;
         for (int i = 0; i < pArray.size(); i++)
         {
             glBindTexture(GL_TEXTURE_CUBE_MAP, planetTexture[i]);
-            createPlanets(&lightObjShader, i, offsetVec);
+            createPlanets(&lightObjShader, i);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
         
@@ -574,16 +663,16 @@ int main()
         for (int i = 0; i < mArray.size(); i++)
         {
             glBindTexture(GL_TEXTURE_CUBE_MAP, moonTexture[i]);
-            createMoons(&lightObjShader, i, offsetVec[mArray[i].fatherId - 1]);
+            createMoons(&lightObjShader, i);
             glDrawArrays(GL_TRIANGLES, 0, sphereVec.size()/5);
         }
         
-        glm::vec3 starPos = sArray[0].pos;
-        glm::vec3 camPos = camera.getPosition();
-        if (enableControl && glm::distance(starPos, camPos) <= sArray[0].scale + 0.5)
+        // collision
+        glm::vec3 collisionPos = glm::vec3(0, 0, 0);
+        if (enableControl && checkCollision(collisionPos))
         {
             enableControl = false;
-            camera.startDizzy(glm::normalize(camPos - starPos));
+            camera.startDizzy(glm::normalize(camera.getPosition() - collisionPos));
         }
         
         if (!enableControl)
