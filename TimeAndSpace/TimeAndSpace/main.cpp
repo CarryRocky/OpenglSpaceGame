@@ -16,8 +16,11 @@
 
 #include <iostream>
 #include <vector>
+
 #include <string>
+#include <irrKlang/irrKlang.h>
 using namespace std;
+using namespace irrklang;
 
 #include "planetConfig.h"
 
@@ -31,6 +34,8 @@ using namespace std;
 
 #define WIN_WIDTH 750
 #define WIN_HEIGHT 750
+
+ISoundEngine *SoundEngine = createIrrKlangDevice();
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
@@ -574,6 +579,8 @@ int main()
     
     bool isFirstLoop = true;
     
+    SoundEngine->play2D("sounds/getout.ogg", GL_TRUE);
+    
     while(!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
@@ -671,6 +678,7 @@ int main()
         glm::vec3 collisionPos = glm::vec3(0, 0, 0);
         if (enableControl && checkCollision(collisionPos))
         {
+            SoundEngine->play2D("sounds/explosion.wav", GL_FALSE);
             enableControl = false;
             camera.startDizzy(glm::normalize(camera.getPosition() - collisionPos));
         }

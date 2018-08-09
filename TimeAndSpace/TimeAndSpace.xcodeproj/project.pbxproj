@@ -14,6 +14,7 @@
 		4F70047B2114068400B754C3 /* libassimp.4.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */; };
 		4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7704BD20F72DAC00C11997 /* camera.cpp */; };
 		4F8998A620E6C24100F8493B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8998A520E6C24100F8493B /* main.cpp */; };
+		4F8DA6FC211CE9410021FCE1 /* libirrklang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F8DA6F5211CDF170021FCE1 /* libirrklang.dylib */; };
 		4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F97EE1520EF0C14009CCED2 /* shader.cpp */; };
 		4F97F13520EF4111009CCED2 /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 4F97F13420EF4111009CCED2 /* glad.c */; };
 		4FACCED020EB3DBE00E557F0 /* helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FACCECE20EB3DBE00E557F0 /* helpers.cpp */; };
@@ -72,9 +73,12 @@
 		4F7704BE20F72DAC00C11997 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F8998A520E6C24100F8493B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		4F8DA6F5211CDF170021FCE1 /* libirrklang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libirrklang.dylib; path = ../../../../../../usr/local/Cellar/irrKlang/1.6.0/lib/libirrklang.dylib; sourceTree = "<group>"; };
+		4F8DA6F8211CE5080021FCE1 /* ikpMP3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = ikpMP3.dylib; path = ../../../../../../usr/local/Cellar/irrKlang/1.6.0/lib/ikpMP3.dylib; sourceTree = "<group>"; };
 		4F97EE1520EF0C14009CCED2 /* shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
 		4F97EE1620EF0C14009CCED2 /* shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = shader.hpp; sourceTree = "<group>"; };
 		4F97F13420EF4111009CCED2 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../../../../Downloads/glad/src/glad.c; sourceTree = "<group>"; };
+		4FA0838B211CEBFC0084EFA5 /* getout.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = getout.ogg; sourceTree = "<group>"; };
 		4FACCECE20EB3DBE00E557F0 /* helpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = helpers.cpp; sourceTree = "<group>"; };
 		4FACCECF20EB3DBE00E557F0 /* helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = helpers.hpp; sourceTree = "<group>"; };
 		4FAE1F24210A681300912BA8 /* skybox.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = skybox.vs; sourceTree = "<group>"; };
@@ -89,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F8DA6FC211CE9410021FCE1 /* libirrklang.dylib in Frameworks */,
 				4F70047B2114068400B754C3 /* libassimp.4.1.0.dylib in Frameworks */,
 				4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */,
 				4F130BB720E6EA8200A38FBA /* OpenGL.framework in Frameworks */,
@@ -101,6 +106,8 @@
 		4F130BB520E6EA8200A38FBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4F8DA6F8211CE5080021FCE1 /* ikpMP3.dylib */,
+				4F8DA6F5211CDF170021FCE1 /* libirrklang.dylib */,
 				4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */,
 				4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */,
 				4F130BB620E6EA8200A38FBA /* OpenGL.framework */,
@@ -156,6 +163,7 @@
 		4F8998A420E6C24100F8493B /* TimeAndSpace */ = {
 			isa = PBXGroup;
 			children = (
+				4FA0838A211CEBFC0084EFA5 /* sounds */,
 				4F7004702113DF6B00B754C3 /* models */,
 				4FB079E420F2D28000EE3F1B /* imgs */,
 				4F7704BC20F72D9600C11997 /* camera */,
@@ -168,6 +176,14 @@
 				4FD416972118EF09004245CB /* comet.hpp */,
 			);
 			path = TimeAndSpace;
+			sourceTree = "<group>";
+		};
+		4FA0838A211CEBFC0084EFA5 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				4FA0838B211CEBFC0084EFA5 /* getout.ogg */,
+			);
+			path = sounds;
 			sourceTree = "<group>";
 		};
 		4FACCECD20EB3D8000E557F0 /* helpers */ = {
@@ -413,6 +429,7 @@
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.2.1/lib,
 					/usr/local/Cellar/assimp/4.1.0/lib,
+					/usr/local/Cellar/irrKlang/1.6.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_HEADER_SEARCH_PATHS = "";
@@ -428,6 +445,7 @@
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.2.1/lib,
 					/usr/local/Cellar/assimp/4.1.0/lib,
+					/usr/local/Cellar/irrKlang/1.6.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_HEADER_SEARCH_PATHS = "";
