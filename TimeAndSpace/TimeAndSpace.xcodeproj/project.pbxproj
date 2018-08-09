@@ -78,7 +78,8 @@
 		4F97EE1520EF0C14009CCED2 /* shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
 		4F97EE1620EF0C14009CCED2 /* shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = shader.hpp; sourceTree = "<group>"; };
 		4F97F13420EF4111009CCED2 /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../../../../../../Downloads/glad/src/glad.c; sourceTree = "<group>"; };
-		4FA0838B211CEBFC0084EFA5 /* getout.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = getout.ogg; sourceTree = "<group>"; };
+		4FA0838C211CEE8F0084EFA5 /* breakout.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = breakout.wav; sourceTree = "<group>"; };
+		4FA0838D211CEE8F0084EFA5 /* explosion.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion.wav; sourceTree = "<group>"; };
 		4FACCECE20EB3DBE00E557F0 /* helpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = helpers.cpp; sourceTree = "<group>"; };
 		4FACCECF20EB3DBE00E557F0 /* helpers.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = helpers.hpp; sourceTree = "<group>"; };
 		4FAE1F24210A681300912BA8 /* skybox.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = skybox.vs; sourceTree = "<group>"; };
@@ -181,7 +182,8 @@
 		4FA0838A211CEBFC0084EFA5 /* sounds */ = {
 			isa = PBXGroup;
 			children = (
-				4FA0838B211CEBFC0084EFA5 /* getout.ogg */,
+				4FA0838C211CEE8F0084EFA5 /* breakout.wav */,
+				4FA0838D211CEE8F0084EFA5 /* explosion.wav */,
 			);
 			path = sounds;
 			sourceTree = "<group>";

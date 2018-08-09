@@ -579,7 +579,7 @@ int main()
     
     bool isFirstLoop = true;
     
-    SoundEngine->play2D("sounds/getout.ogg", GL_TRUE);
+    SoundEngine->play2D("sounds/breakout.wav", GL_TRUE);
     
     while(!glfwWindowShouldClose(window))
     {
