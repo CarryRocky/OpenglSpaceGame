@@ -25,6 +25,22 @@ public:
         loadModel(path);
     }
     void Draw(Shader);
+    
+    int getMeshesSize()
+    {
+        return int(meshes.size());
+    }
+    
+    unsigned int getOneMeshVAO(int index)
+    {
+        return meshes[index].getVAO();
+    }
+    
+    // suitable for instancing use
+    unsigned int getPublicTextureId()
+    {
+        return textures_loaded[0].t_id;
+    }
 private:
     vector<Mesh> meshes;
     vector<Texture> textures_loaded;

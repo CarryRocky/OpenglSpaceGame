@@ -42,6 +42,11 @@ public:
     
     Mesh(vector<Vertex>, vector<unsigned int>, vector<Texture>);
     void Draw(Shader&);
+    
+    unsigned int getVAO()
+    {
+        return VAO;
+    }
 private:
     unsigned int VAO, VBO, EBO;
 

@@ -662,7 +662,7 @@ int main()
     // hide the cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
-    Model ourModel("/Users/carry/Downloads/Smoke_Track.obj");
+    Model ourModel("/Users/carry/Documents/OpenglGame/models/comet/Smoke_Track.obj");
     
     Shader modelShader("shaders/comet.vs", "shaders/comet.fs");
     
