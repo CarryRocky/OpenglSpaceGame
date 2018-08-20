@@ -13,6 +13,7 @@
 		4F7004772113F4EC00B754C3 /* model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7004752113F4EC00B754C3 /* model.cpp */; };
 		4F70047B2114068400B754C3 /* libassimp.4.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */; };
 		4F7704BF20F72DAC00C11997 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F7704BD20F72DAC00C11997 /* camera.cpp */; };
+		4F7E0A382124DC2D002D6A53 /* libfreetype.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F7E0A372124DC2D002D6A53 /* libfreetype.6.dylib */; };
 		4F8998A620E6C24100F8493B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F8998A520E6C24100F8493B /* main.cpp */; };
 		4F8DA6FC211CE9410021FCE1 /* libirrklang.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F8DA6F5211CDF170021FCE1 /* libirrklang.dylib */; };
 		4F97EE1720EF0C14009CCED2 /* shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F97EE1520EF0C14009CCED2 /* shader.cpp */; };
@@ -40,6 +41,8 @@
 		4F4BF3E320FD56FD00876BB2 /* light.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.fs; sourceTree = "<group>"; };
 		4F4BF3E420FD576F00876BB2 /* source.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.vs; sourceTree = "<group>"; };
 		4F4BF3E520FD578200876BB2 /* source.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.fs; sourceTree = "<group>"; };
+		4F5A6215212613540018DEEF /* text.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = text.vs; sourceTree = "<group>"; };
+		4F5A6216212613B60018DEEF /* text.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = text.fs; sourceTree = "<group>"; };
 		4F70045A2113DECF00B754C3 /* bottom.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = bottom.tga; sourceTree = "<group>"; };
 		4F70045B2113DECF00B754C3 /* moon_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_1.jpg; sourceTree = "<group>"; };
 		4F70045C2113DECF00B754C3 /* moon_3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = moon_3.jpg; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 		4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.4.1.0.dylib; path = ../../../../../../usr/local/Cellar/assimp/4.1.0/lib/libassimp.4.1.0.dylib; sourceTree = "<group>"; };
 		4F7704BD20F72DAC00C11997 /* camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		4F7704BE20F72DAC00C11997 /* camera.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = camera.hpp; sourceTree = "<group>"; };
+		4F7E0A372124DC2D002D6A53 /* libfreetype.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfreetype.6.dylib; path = ../../../../../../opt/X11/lib/libfreetype.6.dylib; sourceTree = "<group>"; };
 		4F8998A220E6C24100F8493B /* TimeAndSpace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TimeAndSpace; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F8998A520E6C24100F8493B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4F8DA6F5211CDF170021FCE1 /* libirrklang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libirrklang.dylib; path = ../../../../../../usr/local/Cellar/irrKlang/1.6.0/lib/libirrklang.dylib; sourceTree = "<group>"; };
@@ -94,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F7E0A382124DC2D002D6A53 /* libfreetype.6.dylib in Frameworks */,
 				4F8DA6FC211CE9410021FCE1 /* libirrklang.dylib in Frameworks */,
 				4F70047B2114068400B754C3 /* libassimp.4.1.0.dylib in Frameworks */,
 				4F130BB920E6EABE00A38FBA /* libglfw.3.2.dylib in Frameworks */,
@@ -107,6 +112,7 @@
 		4F130BB520E6EA8200A38FBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4F7E0A372124DC2D002D6A53 /* libfreetype.6.dylib */,
 				4F8DA6F8211CE5080021FCE1 /* ikpMP3.dylib */,
 				4F8DA6F5211CDF170021FCE1 /* libirrklang.dylib */,
 				4F70047A2114068400B754C3 /* libassimp.4.1.0.dylib */,
@@ -210,6 +216,8 @@
 				4FAE1F25210A682D00912BA8 /* skybox.fs */,
 				4F7004782114046600B754C3 /* comet.vs */,
 				4F7004792114047500B754C3 /* comet.fs */,
+				4F5A6215212613540018DEEF /* text.vs */,
+				4F5A6216212613B60018DEEF /* text.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -432,6 +440,7 @@
 					/usr/local/Cellar/glfw/3.2.1/lib,
 					/usr/local/Cellar/assimp/4.1.0/lib,
 					/usr/local/Cellar/irrKlang/1.6.0/lib,
+					/opt/X11/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_HEADER_SEARCH_PATHS = "";
@@ -448,6 +457,7 @@
 					/usr/local/Cellar/glfw/3.2.1/lib,
 					/usr/local/Cellar/assimp/4.1.0/lib,
 					/usr/local/Cellar/irrKlang/1.6.0/lib,
+					/opt/X11/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_HEADER_SEARCH_PATHS = "";

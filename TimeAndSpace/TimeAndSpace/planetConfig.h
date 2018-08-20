@@ -100,10 +100,10 @@ const vector<Planet> pArray{
 };
 
 const vector<Moon> mArray{
-    Moon(0.8f, 1, 3, "imgs/moon_1.jpg"),
-    Moon(0.4f, 2, 5, "imgs/moon_2.jpg"),
-    Moon(0.6f, 3, 6, "imgs/moon_3.jpg"),
-    Moon(1.2f, 4, 8, "imgs/moon_4.jpg"),
+    Moon(1.3f, 1, 3, "imgs/moon_1.jpg"),
+    Moon(1.0f, 2, 5, "imgs/moon_2.jpg"),
+    Moon(1.1f, 3, 6, "imgs/moon_3.jpg"),
+    Moon(1.7f, 4, 8, "imgs/moon_4.jpg"),
 };
 
 struct SolarInfo

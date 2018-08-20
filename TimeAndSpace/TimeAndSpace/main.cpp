@@ -16,11 +16,18 @@
 
 #include <iostream>
 #include <vector>
-
 #include <string>
-#include <irrKlang/irrKlang.h>
+#include <map>
+#include <unordered_set>
+// std::pair
+#include <utility>
 using namespace std;
+
+#include <irrKlang/irrKlang.h>
 using namespace irrklang;
+// due to how FreeType is developed, the header files cannot be put in a new directory
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include "planetConfig.h"
 
@@ -30,7 +37,7 @@ using namespace irrklang;
 #include "comet.hpp"
 // by defining STB_IMAGE_IMPLEMENTATION the preprocessor modifies the header file such that it only contains the relevant definition source code, effectively turning the header file into a .cpp file
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
 
 #define WIN_WIDTH 750
 #define WIN_HEIGHT 750
@@ -39,10 +46,22 @@ ISoundEngine *SoundEngine = createIrrKlangDevice();
 
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
+struct Character {
+    GLuint     TextureID;
+    glm::ivec2 Size;
+    glm::ivec2 Bearing;
+    GLuint     Advance;
+};
+
+map<GLchar, Character> Characters;
+
 vector<SolarInfo> solarCollisionVec;
 vector<glm::vec3> starPoses;
 vector<glm::vec3> planetPoses;
 vector<glm::vec3> moonPoses;
+
+unordered_set<int> exploredPlanets;
+int exploreArray[3] = {0, 0, 0};
 
 float deltaTime = 0.0f;     // time between current frame and last frame
 float lastFrame = 0.0f;     // time of last frame
@@ -329,6 +348,16 @@ void dealSolarData()
     }
 }
 
+void checkExploredInfo(int hitType, int pid)
+{
+    int uniqueId = hitType * 1000 + pid;
+    if (exploredPlanets.find(uniqueId) == exploredPlanets.end())
+    {
+        exploredPlanets.insert(uniqueId);
+        exploreArray[hitType - 1]++;
+    }
+}
+
 bool checkCollision(glm::vec3 &collisionPos)
 {
     bool collide = false;
@@ -342,6 +371,7 @@ bool checkCollision(glm::vec3 &collisionPos)
         {
             if (glm::distance(cameraPos, sArray[i].pos) <= sArray[i].scale + 0.5f)
             {
+                checkExploredInfo(1, i);
                 collide = true;
                 collisionPos = sArray[i].pos;
                 break;
@@ -352,6 +382,7 @@ bool checkCollision(glm::vec3 &collisionPos)
             {
                 if (glm::distance(cameraPos, planetPoses[childPlanets[j]]) <= pArray[childPlanets[j]].scale + 0.5f)
                 {
+                    checkExploredInfo(2, childPlanets[j]);
                     collide = true;
                     collisionPos = planetPoses[childPlanets[j]];
                     break;
@@ -363,6 +394,7 @@ bool checkCollision(glm::vec3 &collisionPos)
             {
                 if (glm::distance(cameraPos, moonPoses[childMoons[j]]) <= mArray[childMoons[j]].scale + 0.5f)
                 {
+                    checkExploredInfo(3, childMoons[j]);
                     collide = true;
                     collisionPos = moonPoses[childMoons[j]];
                     break;
@@ -372,6 +404,51 @@ bool checkCollision(glm::vec3 &collisionPos)
     }
     
     return collide;
+}
+
+void RenderText(Shader &s, string text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color, GLuint &VAO, GLuint &VBO)
+{
+    // activate corresponding render state
+    s.use();
+    s.setFloat("textColor", color.x, color.y, color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(VAO);
+    
+    // iterate through all characters
+    string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++)
+    {
+        Character ch = Characters[*c];
+        
+        GLfloat xpos = x + ch.Bearing.x * scale;
+        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        
+        GLfloat w = ch.Size.x * scale;
+        GLfloat h = ch.Size.y * scale;
+        // update VBO for each character
+        GLfloat vertices[6][4] = {
+            { xpos,     ypos + h,   0.0, 0.0 },
+            { xpos,     ypos,       0.0, 1.0 },
+            { xpos + w, ypos,       1.0, 1.0 },
+            
+            { xpos,     ypos + h,   0.0, 0.0 },
+            { xpos + w, ypos,       1.0, 1.0 },
+            { xpos + w, ypos + h,   1.0, 0.0 }
+        };
+        // render glyph texture over quad
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        // update content of VBO memory
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        // bitshift by 6 to get value in pixels (2^6 = 64)
+        x += (ch.Advance >> 6) * scale;
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 int main()
@@ -508,6 +585,18 @@ int main()
     glBindVertexArray(lightVAO);
     bindSphereVBO(VBO, sphereVec, vertices);
     
+    // text VAO, VBO
+    GLuint tVAO, tVBO;
+    glGenVertexArrays(1, &tVAO);
+    glGenBuffers(1, &tVBO);
+    glBindVertexArray(tVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, tVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
     vector<string> faces
     {
         "imgs/right.tga",
@@ -567,6 +656,8 @@ int main()
     lightSourceShader.setInt("texture1", 0);
     
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     // hide the cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -579,7 +670,59 @@ int main()
     
     bool isFirstLoop = true;
     
+    // sound
     SoundEngine->play2D("sounds/breakout.wav", GL_TRUE);
+    
+    // font
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft))
+        cout << "ERROR::FREETYPE: Could not init FreeType Library" << endl;
+
+    FT_Face face;
+    if (FT_New_Face(ft, "sounds/Arial Black.ttf", 0, &face))
+        cout << "ERROR::FREETYPE: Failed to load font" << endl;
+    
+    FT_Set_Pixel_Sizes(face, 0, 24);
+    
+    // disable byte-alignment restriction
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    
+    for (GLubyte c = 0; c < 128; c++)
+    {
+        // load character glyph
+        // by setting FT_LOAD_RENDER as one of the loading flags, FreeType will create an 8-bit grayscale bitmap image
+        if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+        {
+            cout << "ERROR::FREETYTPE: Failed to load Glyph" << endl;
+            continue;
+        }
+        // generate texture
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
+        // set texture options
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // now store character for later use
+        Character character = {
+            texture,
+            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            GLuint(face->glyph->advance.x)
+        };
+        Characters.insert(std::pair<GLchar, Character>(c, character));
+    }
+    
+    // clear FreeType's resources
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
+    glm::mat4 projection = glm::ortho(0.0f, float(WIN_WIDTH), 0.0f, float(WIN_HEIGHT));
+    Shader textShader("shaders/text.vs", "shaders/text.fs");
+    textShader.use();
+    textShader.setMatrix4("projection", glm::value_ptr(projection));
     
     while(!glfwWindowShouldClose(window))
     {
@@ -596,7 +739,7 @@ int main()
         processInput(window);
         
         //rendering
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         glm::mat4 projection;
@@ -706,6 +849,11 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // set depth function back to default
         glDepthFunc(GL_LESS);
+        
+        // text
+        RenderText(textShader, "Explored Sun: " + to_string(exploreArray[0]) + " / " + to_string(sArray.size()), 25.0f, 85.0f, 1.0f, glm::vec3(1.0f, 0.8f, 0.3f), tVAO, tVBO);
+        RenderText(textShader, "Explored Planet: " + to_string(exploreArray[1]) + " / " + to_string(pArray.size()), 25.0f, 55.0f, 1.0f, glm::vec3(0.5f, 0.8f, 1.0f), tVAO, tVBO);
+        RenderText(textShader, "Explored Moon: " + to_string(exploreArray[2]) + " / " + to_string(mArray.size()), 25.0f, 25.0f, 1.0f, glm::vec3(0.7f, 0.8f, 0.8f), tVAO, tVBO);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)
