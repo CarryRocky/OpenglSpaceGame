@@ -36,6 +36,11 @@ public:
         return meshes[index].getVAO();
     }
     
+    Mesh getOneMesh(int index)
+    {
+        return meshes[index];
+    }
+    
     // suitable for instancing use
     unsigned int getPublicTextureId()
     {

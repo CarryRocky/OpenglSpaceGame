@@ -662,9 +662,11 @@ int main()
     // hide the cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
+    Model asteroidModel("/Users/carry/Documents/OpenglGame/models/astroid/rock.obj");
     Model ourModel("/Users/carry/Documents/OpenglGame/models/comet/Smoke_Track.obj");
     
     Shader modelShader("shaders/comet.vs", "shaders/comet.fs");
+    Shader asteroidShader("shaders/asteroid.vs", "shaders/asteroid.fs");
     
     Comet *curComet = new Comet(&camera);
     
@@ -724,6 +726,59 @@ int main()
     textShader.use();
     textShader.setMatrix4("projection", glm::value_ptr(projection));
     
+    // asteroids
+    // generate a large list of semi-random model transformation matrices
+    unsigned int amount = 6000;
+    glm::mat4* modelMatrices;
+    modelMatrices = new glm::mat4[amount];
+    // initialize random seed
+    srand(glfwGetTime());
+    for (unsigned int i = 0; i < amount; i++)
+    {
+        glm::mat4 model;
+
+        float x = rand() % 100 - 50;
+        float y = rand() % 100 - 50;
+        float z = rand() % 100 - 50;
+        model = glm::translate(model, glm::vec3(x, y, z));
+        
+        float scale = (rand() % 10) / 100.0f + 0.05;
+        model = glm::scale(model, glm::vec3(scale));
+        
+        float rotAngle = (rand() % 360);
+        model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+        
+        modelMatrices[i] = model;
+    }
+    // configure instanced array
+    unsigned int asteroidBuffer;
+    glGenBuffers(1, &asteroidBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, asteroidBuffer);
+    glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
+    
+    // set transformation matrices as an instance vertex attribute (with divisor 1)
+    for (unsigned int i = 0; i < asteroidModel.getMeshesSize(); i++)
+    {
+        unsigned int aVAO = asteroidModel.getOneMeshVAO(i);
+        glBindVertexArray(aVAO);
+        // set attribute pointers for matrix (4 times vec4)
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(6);
+        glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+        
+        glVertexAttribDivisor(3, 1);
+        glVertexAttribDivisor(4, 1);
+        glVertexAttribDivisor(5, 1);
+        glVertexAttribDivisor(6, 1);
+        
+        glBindVertexArray(0);
+    }
+    
     while(!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();
@@ -767,14 +822,6 @@ int main()
             delete curComet;
             curComet = new Comet(&camera);
         }
-        
-        // comet
-        modelShader.use();
-        modelShader.setMatrix4("view", glm::value_ptr(view));
-        modelShader.setMatrix4("projection", glm::value_ptr(projection));
-        curComet->update(&modelShader, deltaTime);
-        modelShader.setVec3("lightPos", camera.getPosition());
-        ourModel.Draw(modelShader);
         
         // earth
         lightObjShader.use();
@@ -850,10 +897,40 @@ int main()
         // set depth function back to default
         glDepthFunc(GL_LESS);
         
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // text
         RenderText(textShader, "Explored Sun: " + to_string(exploreArray[0]) + " / " + to_string(sArray.size()), 25.0f, 85.0f, 1.0f, glm::vec3(1.0f, 0.8f, 0.3f), tVAO, tVBO);
         RenderText(textShader, "Explored Planet: " + to_string(exploreArray[1]) + " / " + to_string(pArray.size()), 25.0f, 55.0f, 1.0f, glm::vec3(0.5f, 0.8f, 1.0f), tVAO, tVBO);
         RenderText(textShader, "Explored Moon: " + to_string(exploreArray[2]) + " / " + to_string(mArray.size()), 25.0f, 25.0f, 1.0f, glm::vec3(0.7f, 0.8f, 0.8f), tVAO, tVBO);
+        
+        glDisable(GL_BLEND);
+        // asteroid
+        // draw meteorites
+        asteroidShader.use();
+        asteroidShader.setMatrix4("projection", glm::value_ptr(projection));
+        asteroidShader.setMatrix4("view", glm::value_ptr(view));
+        asteroidShader.setInt("texture_diffuse1", 0);
+        asteroidShader.setVec3("light.position", camera.getPosition());
+        asteroidShader.setFloat("light.constant", 1.0f);
+        asteroidShader.setFloat("light.linear", 0.027f);
+        asteroidShader.setFloat("light.quadratic", 0.0028f);
+//        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, asteroidModel.getPublicTextureId());
+        for (unsigned int i = 0; i < asteroidModel.getMeshesSize(); i++)
+        {
+            glBindVertexArray(asteroidModel.getOneMeshVAO(i));
+            glDrawElementsInstanced(GL_TRIANGLES, asteroidModel.getOneMesh(i).indices.size(), GL_UNSIGNED_INT, 0, amount);
+            glBindVertexArray(0);
+        }
+        
+        // comet
+        modelShader.use();
+        modelShader.setMatrix4("view", glm::value_ptr(view));
+        modelShader.setMatrix4("projection", glm::value_ptr(projection));
+        curComet->update(&modelShader, deltaTime);
+        modelShader.setVec3("lightPos", camera.getPosition());
+        ourModel.Draw(modelShader);
         
         glfwSwapBuffers(window);
         // check if any events are triggered (like keyboard input or mouse movement events)

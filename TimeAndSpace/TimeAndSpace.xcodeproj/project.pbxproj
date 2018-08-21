@@ -37,6 +37,8 @@
 /* Begin PBXFileReference section */
 		4F130BB620E6EA8200A38FBA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4F130BB820E6EABE00A38FBA /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.2.1/lib/libglfw.3.2.dylib; sourceTree = "<group>"; };
+		4F15446B212B6F2600A2DCD4 /* asteroid.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = asteroid.vs; sourceTree = "<group>"; };
+		4F15446C212B6F3600A2DCD4 /* asteroid.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = asteroid.fs; sourceTree = "<group>"; };
 		4F4BF3E220FD56E900876BB2 /* light.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.vs; sourceTree = "<group>"; };
 		4F4BF3E320FD56FD00876BB2 /* light.fs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = light.fs; sourceTree = "<group>"; };
 		4F4BF3E420FD576F00876BB2 /* source.vs */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = source.vs; sourceTree = "<group>"; };
@@ -218,6 +220,8 @@
 				4F7004792114047500B754C3 /* comet.fs */,
 				4F5A6215212613540018DEEF /* text.vs */,
 				4F5A6216212613B60018DEEF /* text.fs */,
+				4F15446B212B6F2600A2DCD4 /* asteroid.vs */,
+				4F15446C212B6F3600A2DCD4 /* asteroid.fs */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
