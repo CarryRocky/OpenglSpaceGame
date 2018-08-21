@@ -683,7 +683,7 @@ int main()
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             GLuint(face->glyph->advance.x)
         };
-        Characters.insert(std::pair<GLchar, Character>(c, character));
+        Characters.insert(pair<GLchar, Character>(c, character));
     }
     
     // clear FreeType's resources

@@ -166,7 +166,7 @@ unsigned int Model::TextureFromFile(const char *path, const string &directory, b
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
+        cout << "Texture failed to load at path: " << path << endl;
         stbi_image_free(data);
     }
     
