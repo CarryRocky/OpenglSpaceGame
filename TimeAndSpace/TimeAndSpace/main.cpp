@@ -235,6 +235,7 @@ unsigned int loadCubemap(vector<string> faces)
     for (unsigned int i = 0; i < faces.size(); i++)
     {
         unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -728,7 +729,7 @@ int main()
     
     // asteroids
     // generate a large list of semi-random model transformation matrices
-    unsigned int amount = 6000;
+    unsigned int amount = 1000;
     glm::mat4* modelMatrices;
     modelMatrices = new glm::mat4[amount];
     // initialize random seed
@@ -798,7 +799,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(camera.getZoom()), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(camera.getZoom()), float(WIN_WIDTH / WIN_HEIGHT), 0.1f, 60.0f);
         
         // sun
         lightSourceShader.use();
@@ -941,6 +942,8 @@ int main()
     glfwTerminate();
     
     delete []vertices;
+    delete curComet;
+    delete []modelMatrices;
     
     return 0;
 }
