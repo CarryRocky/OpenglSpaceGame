@@ -865,7 +865,7 @@ int main()
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // text
-        RenderText(textShader, "Explored Sun: " + to_string(exploreArray[0]) + " / " + to_string(sArray.size()), 25.0f, 85.0f, 1.0f, glm::vec3(1.0f, 0.8f, 0.3f), tVAO, tVBO);
+        RenderText(textShader, "Explored Star: " + to_string(exploreArray[0]) + " / " + to_string(sArray.size()), 25.0f, 85.0f, 1.0f, glm::vec3(1.0f, 0.8f, 0.3f), tVAO, tVBO);
         RenderText(textShader, "Explored Planet: " + to_string(exploreArray[1]) + " / " + to_string(pArray.size()), 25.0f, 55.0f, 1.0f, glm::vec3(0.5f, 0.8f, 1.0f), tVAO, tVBO);
         RenderText(textShader, "Explored Moon: " + to_string(exploreArray[2]) + " / " + to_string(mArray.size()), 25.0f, 25.0f, 1.0f, glm::vec3(0.7f, 0.8f, 0.8f), tVAO, tVBO);
         

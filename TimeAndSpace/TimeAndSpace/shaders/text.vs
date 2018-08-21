@@ -1,5 +1,4 @@
 #version 330 core
-// <vec2 pos, vec2 tex>
 layout (location = 0) in vec4 vertex;
 out vec2 TexCoords;
 
