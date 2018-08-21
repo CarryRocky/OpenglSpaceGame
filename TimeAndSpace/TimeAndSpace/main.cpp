@@ -63,8 +63,10 @@ vector<glm::vec3> moonPoses;
 unordered_set<int> exploredPlanets;
 int exploreArray[3] = {0, 0, 0};
 
-float deltaTime = 0.0f;     // time between current frame and last frame
-float lastFrame = 0.0f;     // time of last frame
+// time between current frame and last frame
+float deltaTime = 0.0f;
+// time of last frame
+float lastFrame = 0.0f;
 
 float lastX, lastY;
 bool firstMouse = true;
@@ -114,7 +116,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     }
     
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;   // reversed since y-coordinates range from bottom to top
+    // reversed since y-coordinates range from bottom to top
+    float yoffset = lastY - ypos;
     
     lastX = xpos;
     lastY = ypos;
@@ -132,36 +135,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
-//void loadTextureFile(unsigned int &texture, const char *fileName, GLenum imgType, bool needFlip)
-//{
-//    glGenTextures(1, &texture);
-//    glBindTexture(GL_TEXTURE_2D, texture);
-//
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//
-//    stbi_set_flip_vertically_on_load(needFlip);
-//
-//    int width, height, nrChannels;
-//    unsigned char *data = stbi_load(fileName, &width, &height, &nrChannels, 0);
-//    if (data)
-//    {
-//        // the second argument specifies the mipmap level
-//        // the third argument tells OpenGL the format of the texture to store
-//        // the sixth argument should always be zero (some legacy stuff)
-//        // the seventh and eighth argument specify the format and datatype of the source image
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, imgType, GL_UNSIGNED_BYTE, data);
-//        glGenerateMipmap(GL_TEXTURE_2D);
-//    }
-//    else
-//    {
-//        cout << "Failed to load texture: " << fileName << endl;
-//    }
-//    stbi_image_free(data);
-//}
 
 void sphereVecPushBack(vector<float> &newVec, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 {
@@ -609,12 +582,6 @@ int main()
     };
     unsigned int cubemapTexture = loadCubemap(faces);
 
-//    unsigned int texture1, texture2, texture3;
-//    // load and generate the texture
-//    loadTextureFile(texture1, "imgs/sun.jpg", GL_RGB, true);
-//    loadTextureFile(texture2, "imgs/earth.jpg", GL_RGB, true);
-//    loadTextureFile(texture3, "imgs/moon.jpg", GL_RGB, true);
-
     // texture
     vector<unsigned int> sunTexture;
     for (int i = 0; i < sArray.size(); i++)
@@ -826,7 +793,6 @@ int main()
         
         // earth
         lightObjShader.use();
-//        glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         
         lightObjShader.setFloat("light.constant", 1.0f);
@@ -856,8 +822,6 @@ int main()
         }
         
         // moon
-//        glBindTexture(GL_TEXTURE_2D, texture3);
-        
         for (int i = 0; i < mArray.size(); i++)
         {
             glBindTexture(GL_TEXTURE_CUBE_MAP, moonTexture[i]);
@@ -916,7 +880,6 @@ int main()
         asteroidShader.setFloat("light.constant", 1.0f);
         asteroidShader.setFloat("light.linear", 0.027f);
         asteroidShader.setFloat("light.quadratic", 0.0028f);
-//        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, asteroidModel.getPublicTextureId());
         for (unsigned int i = 0; i < asteroidModel.getMeshesSize(); i++)
         {
